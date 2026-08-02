@@ -1,7 +1,7 @@
 
 # Kaggriculture
 
-[コンペの詳細はここ]()
+[詳細はここ](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/data/jp_readme.md)
 
 | Score |     |
 | ----- | --- |
