@@ -6,7 +6,7 @@
 
 ### 分析フォルダ
 
-### [jsonのログの内訳](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/plot/json_file_log.md)
+### [jsonのログの内訳](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/json_file_log.md)
 
 
 
