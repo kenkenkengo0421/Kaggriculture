@@ -10,6 +10,14 @@
 ### [flow/flow.drawio.pdf](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/flow/flow.drawio.pdf)
 
 
+### 分析フォルダ
+
+### [jsonのログの内訳](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/plot/json_file_log.md)
+
+### [jsonのログ可視化](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/plot/plt.ipynb)
+
+
+
 ### 環境
 
 ```google_colab```
