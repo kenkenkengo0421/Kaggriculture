@@ -4,12 +4,6 @@
 ### [詳細はここ data/jp_readme.md](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/data/jp_readme.md)
 
 
-
-### フロー図
-
-### [flow/flow.drawio.pdf](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/flow/flow.drawio.pdf)
-
-
 ### 分析フォルダ
 
 ### [jsonのログの内訳](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/plot/json_file_log.md)
@@ -34,6 +28,7 @@
 |v0.3|294 – 600|
 |v0.4|316 – 600|
 |v0.5|301 – 600|
+|v0.6|418 – 600|
 
 </details>
 
