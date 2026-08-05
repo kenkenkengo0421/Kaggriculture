@@ -6,11 +6,13 @@
 
 
 ### フロー図
-### [flow/flow.drawio.pdf]("https://github.com/kenkenkengo0421/Kaggriculture/blob/main/flow/flow.drawio.pdf")
+
+### [flow/flow.drawio.pdf](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/flow/flow.drawio.pdf)
 
 
 ### 環境
-google_colab
+
+```google_colab```
 
 ## スコア
 
