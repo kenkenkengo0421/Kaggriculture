@@ -1,23 +1,38 @@
 
 # Kaggriculture
 
-[詳細はここ](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/data/jp_readme.md)
+### [詳細はここ data/jp_readme.md](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/data/jp_readme.md)
 
-| Ver  | Score   |
-| ---- | ------- |
-| v0.0 | 200-600 |
-|v0.1|268 – 600|
-|v0.2|234 – 600|
-|v0.3|294 – 600|
-|v0.4|421 – 600|
+
+
+### フロー図
+### [flow/flow.drawio.pdf]("https://github.com/kenkenkengo0421/Kaggriculture/blob/main/flow/flow.drawio.pdf")
+
 
 ### 環境
 google_colab
 
+## スコア
+
+<details><summary></summary>
+
+| Ver  | Score   |
+| ---- | ------- |
+|v0.0| 200-600 |
+|v0.1|268 – 600|
+|v0.2|234 – 600|
+|v0.3|294 – 600|
+|v0.4|316 – 600|
+|v0.5|301 – 600|
+
+</details>
+
+
+
 
 ## 1. ゲームの基本仕様と勝利条件
 
-<details><summary>↓</summary>
+<details><summary></summary>
 
 |**項目**|**詳細・パラメータ**|**備考**|
 |---|---|---|
@@ -32,7 +47,7 @@ google_colab
 
 ## 2. 作物と動物のスペック比較表
 
-<details><summary>↓</summary>
+<details><summary></summary>
 
 各リソースのコスト、収益性、必要なケアをまとめました。高級品（メロン、羊毛など）と日用品（小麦など）で特性が大きく異なります。
 
@@ -52,7 +67,7 @@ google_colab
 
 ## 3. アクション（行動）ルールと制約
 
-<details><summary>↓</summary>
+<details><summary></summary>
 
 各ターン、メイン農家と雇用した農作業員はそれぞれ1つのアクションを実行できます。
 
@@ -69,7 +84,7 @@ google_colab
 
 ### コマンド
 
-<details><summary>↓</summary>
+<details><summary></summary>
 
 | **コマンド**                        | **引数**      | **詳細な効果と制約**                                                                                                                                       |
 | ------------------------------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -100,9 +115,9 @@ google_colab
 
 
 
-## 4. 市場経済と価格変動メカニズム（ダイナミック・マーケット）
+## 4. 市場経済と価格変動メカニズム
 
-<details><summary>↓</summary>
+<details><summary></summary>
 
 Kaggricultureの最も難しいポイントは、価格が共有の「市場在庫（Supply）」と「町の需要（Demand）」によってリアルタイムに変動することです。
 
