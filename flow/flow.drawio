@@ -1,0 +1,254 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.6 Chrome/144.0.7559.236 Electron/40.8.4 Safari/537.36" version="29.6.6">
+  <diagram name="ページ-1" id="R_GeWpFZJbrKpwIGilQ4">
+    <mxGraphModel dx="1056" dy="1026" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="wSkbzXtgzg5KCMsMg299-8" parent="1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="① 状況の把握（観測データの読み込み）" vertex="1">
+          <mxGeometry height="120" width="230" x="310" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-9" parent="wSkbzXtgzg5KCMsMg299-8" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="・現在地（社長、労働者）の取得" vertex="1">
+          <mxGeometry height="30" width="230" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-10" parent="wSkbzXtgzg5KCMsMg299-8" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="・資&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;金、種の数、小屋の在庫の確認&lt;/span&gt;" vertex="1">
+          <mxGeometry height="30" width="230" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-11" parent="wSkbzXtgzg5KCMsMg299-8" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="・現在雇っている労働者数の確認" vertex="1">
+          <mxGeometry height="30" width="230" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-13" edge="1" parent="1" source="wSkbzXtgzg5KCMsMg299-11" style="endArrow=classic;html=1;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="wSkbzXtgzg5KCMsMg299-14" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="424.80999999999995" y="170.00000000000003" as="sourcePoint" />
+            <mxPoint x="424.52" y="240.27" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-14" parent="1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="② 市場取引・雇用" vertex="1">
+          <mxGeometry height="60" width="230" x="310" y="187" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-25" edge="1" parent="1" source="wSkbzXtgzg5KCMsMg299-20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="wSkbzXtgzg5KCMsMg299-24" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-20" parent="1" style="rhombus;whiteSpace=wrap;html=1;fontStyle=0;startSize=30;horizontal=1;" value="&lt;font style=&quot;font-size: 8px;&quot;&gt;WHEATの種が0&amp;nbsp;&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 8px;&quot;&gt;かつ&lt;/font&gt; &lt;font style=&quot;font-size: 8px;&quot;&gt;資金&lt;/font&gt;&lt;font style=&quot;font-size: 8px;&quot;&gt;$10以上？&lt;/font&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="80" width="115" x="197.5" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-24" parent="1" style="whiteSpace=wrap;html=1;fontStyle=0;startSize=30;horizontal=1;" value="&lt;font style=&quot;font-size: 8px;&quot;&gt;WHEAT種を1つ買う&lt;/font&gt;" vertex="1">
+          <mxGeometry height="60" width="120" x="195" y="370" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-26" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="yes" vertex="1">
+          <mxGeometry height="30" width="60" x="195" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-45" edge="1" parent="1" source="wSkbzXtgzg5KCMsMg299-46" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="wSkbzXtgzg5KCMsMg299-47" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-46" parent="1" style="rhombus;whiteSpace=wrap;html=1;fontStyle=0;startSize=30;horizontal=1;" value="&lt;font style=&quot;font-size: 8px;&quot;&gt;小屋にWHEATの在&lt;/font&gt;&lt;font style=&quot;font-size: 8px;&quot;&gt;庫があ&lt;/font&gt;&lt;font style=&quot;font-size: 8px;&quot;&gt;る？&lt;/font&gt;" vertex="1">
+          <mxGeometry height="80" width="115" x="362.5" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-47" parent="1" style="whiteSpace=wrap;html=1;fontStyle=0;startSize=30;horizontal=1;" value="&lt;font style=&quot;font-size: 8px;&quot;&gt;小麦をすべて売却する&lt;/font&gt;" vertex="1">
+          <mxGeometry height="60" width="120" x="360" y="370" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-48" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="yes" vertex="1">
+          <mxGeometry height="30" width="60" x="362.5" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-49" edge="1" parent="1" source="wSkbzXtgzg5KCMsMg299-50" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="wSkbzXtgzg5KCMsMg299-51" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-50" parent="1" style="rhombus;whiteSpace=wrap;html=1;fontStyle=0;startSize=30;horizontal=1;" value="&lt;font style=&quot;font-size: 8px;&quot;&gt;労働者0人 &lt;/font&gt;&lt;font style=&quot;font-size: 8px;&quot;&gt;かつ&amp;nbsp;&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 8px;&quot;&gt;資金&lt;/font&gt;&lt;font style=&quot;font-size: 8px;&quot;&gt;$&lt;/font&gt;&lt;font style=&quot;font-size: 8px;&quot;&gt;100以&lt;/font&gt;&lt;font style=&quot;font-size: 8px;&quot;&gt;上？&lt;/font&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="80" width="115" x="532.5" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-51" parent="1" style="whiteSpace=wrap;html=1;fontStyle=0;startSize=30;horizontal=1;" value="&lt;font style=&quot;font-size: 8px;&quot;&gt;労働者を1人雇う&lt;/font&gt;" vertex="1">
+          <mxGeometry height="60" width="120" x="530" y="370" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-52" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="yes" vertex="1">
+          <mxGeometry height="30" width="60" x="530" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-55" parent="1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="③ 社長（Farmer）の行動決定" vertex="1">
+          <mxGeometry height="60" width="230" x="302.5" y="470" as="geometry">
+            <mxRectangle height="30" width="200" x="310" y="450" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-81" parent="wSkbzXtgzg5KCMsMg299-55" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="1. 足元の作業確認" vertex="1">
+          <mxGeometry height="30" width="230" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-60" edge="1" parent="1" source="wSkbzXtgzg5KCMsMg299-61" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="wSkbzXtgzg5KCMsMg299-62" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-61" parent="1" style="rhombus;whiteSpace=wrap;html=1;fontStyle=0;startSize=30;horizontal=1;" value="&lt;font style=&quot;font-size: 8px;&quot;&gt;足元が空き地 かつ&lt;/font&gt;&amp;nbsp;&lt;div&gt;&lt;font style=&quot;font-size: 8px;&quot;&gt;WHEAT&lt;/font&gt;&lt;font style=&quot;font-size: 8px;&quot;&gt;の&lt;/font&gt;&lt;font style=&quot;font-size: 8px;&quot;&gt;種がある？&lt;/font&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="80" width="115" x="185" y="750" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-62" parent="1" style="whiteSpace=wrap;html=1;fontStyle=0;startSize=30;horizontal=1;" value="&lt;font style=&quot;font-size: 8px;&quot;&gt;PLANT (種まき)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="60" width="120" x="182.5" y="850" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-63" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="yes" vertex="1">
+          <mxGeometry height="30" width="60" x="182.5" y="820" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-82" parent="1" style="rhombus;whiteSpace=wrap;html=1;fontStyle=0;startSize=30;horizontal=1;" value="&lt;font style=&quot;font-size: 8px;&quot;&gt;足元に植物がある？&lt;/font&gt;" vertex="1">
+          <mxGeometry height="80" width="115" x="360" y="550" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-88" edge="1" parent="1" source="wSkbzXtgzg5KCMsMg299-84" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="wSkbzXtgzg5KCMsMg299-87" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-84" parent="1" style="rhombus;whiteSpace=wrap;html=1;fontStyle=0;startSize=30;horizontal=1;" value="&lt;font style=&quot;font-size: 8px;&quot;&gt;2日以上経過している？&lt;/font&gt;" vertex="1">
+          <mxGeometry height="80" width="115" x="360" y="750" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-86" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="yes" vertex="1">
+          <mxGeometry height="30" width="60" x="330" y="730" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-87" parent="1" style="whiteSpace=wrap;html=1;fontStyle=0;startSize=30;horizontal=1;" value="&lt;font style=&quot;font-size: 8px;&quot;&gt;HARVEST (収穫)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="60" width="120" x="357.5" y="850" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-89" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="yes" vertex="1">
+          <mxGeometry height="30" width="60" x="360" y="820" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-97" edge="1" parent="1" source="wSkbzXtgzg5KCMsMg299-93" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="wSkbzXtgzg5KCMsMg299-96" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-93" parent="1" style="rhombus;whiteSpace=wrap;html=1;fontStyle=0;startSize=30;horizontal=1;" value="&lt;font style=&quot;font-size: 8px;&quot;&gt;今日の水やりがまだ？&lt;/font&gt;" vertex="1">
+          <mxGeometry height="80" width="115" x="532.5" y="750" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-94" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="yes" vertex="1">
+          <mxGeometry height="30" width="60" x="527.5" y="730" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-95" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="wSkbzXtgzg5KCMsMg299-93" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="418" y="628" />
+              <mxPoint x="418" y="730" />
+              <mxPoint x="590" y="730" />
+            </Array>
+            <mxPoint x="421" y="627" as="sourcePoint" />
+            <mxPoint x="500" y="800" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-96" parent="1" style="whiteSpace=wrap;html=1;fontStyle=0;startSize=30;horizontal=1;" value="&lt;font style=&quot;font-size: 8px;&quot;&gt;WATER (水やり)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="60" width="120" x="530" y="850" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-98" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="yes" vertex="1">
+          <mxGeometry height="30" width="60" x="530" y="820" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-102" parent="1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="2. やることがない場合の移動&lt;div&gt;レーダーで畑全体をスキャン&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="230" x="315" y="940" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-109" edge="1" parent="1" source="wSkbzXtgzg5KCMsMg299-105" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="wSkbzXtgzg5KCMsMg299-108" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-113" edge="1" parent="1" source="wSkbzXtgzg5KCMsMg299-105" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="wSkbzXtgzg5KCMsMg299-111" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="276" y="1029.9999999999998" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-105" parent="1" style="rhombus;whiteSpace=wrap;html=1;fontStyle=0;startSize=30;horizontal=1;" value="&lt;font style=&quot;font-size: 8px;&quot;&gt;目的地が見つかった？&lt;/font&gt;" vertex="1">
+          <mxGeometry height="80" width="115" x="356" y="990" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-108" parent="1" style="whiteSpace=wrap;html=1;fontStyle=0;startSize=30;horizontal=1;" value="&lt;font style=&quot;font-size: 8px;&quot;&gt;目的地へ最短で1歩進む&lt;/font&gt;" vertex="1">
+          <mxGeometry height="60" width="120" x="353.5" y="1090" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-111" parent="1" style="whiteSpace=wrap;html=1;fontStyle=0;startSize=30;horizontal=1;" value="&lt;font style=&quot;font-size: 8px;&quot;&gt;PASS (待機)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="60" width="120" x="190" y="1090" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-114" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="yes" vertex="1">
+          <mxGeometry height="30" width="60" x="370" y="1060" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-115" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="no" vertex="1">
+          <mxGeometry height="30" width="60" x="310" y="1000" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-116" parent="1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="④ 労働者（Hands）の行動決定" vertex="1">
+          <mxGeometry height="60" width="230" x="303.5" y="1302" as="geometry">
+            <mxRectangle height="30" width="200" x="310" y="450" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-183" parent="wSkbzXtgzg5KCMsMg299-116" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="1. 足元の作業確認" vertex="1">
+          <mxGeometry height="30" width="230" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-151" edge="1" parent="1" source="wSkbzXtgzg5KCMsMg299-82" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="418" y="628" />
+              <mxPoint x="418" y="628" />
+            </Array>
+            <mxPoint x="416.74" y="627.5" as="sourcePoint" />
+            <mxPoint x="417.9899999999999" y="750" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-161" parent="1" style="rhombus;whiteSpace=wrap;html=1;fontStyle=0;startSize=30;horizontal=1;" value="&lt;font style=&quot;font-size: 8px;&quot;&gt;足元に植物がある？&lt;/font&gt;" vertex="1">
+          <mxGeometry height="80" width="115" x="352.5" y="1372" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-162" edge="1" parent="1" source="wSkbzXtgzg5KCMsMg299-163" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="wSkbzXtgzg5KCMsMg299-165" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-163" parent="1" style="rhombus;whiteSpace=wrap;html=1;fontStyle=0;startSize=30;horizontal=1;" value="&lt;font style=&quot;font-size: 8px;&quot;&gt;2日以上経過している？&lt;/font&gt;" vertex="1">
+          <mxGeometry height="80" width="115" x="350.5" y="1571" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-164" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="yes" vertex="1">
+          <mxGeometry height="30" width="60" x="320.5" y="1551" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-165" parent="1" style="whiteSpace=wrap;html=1;fontStyle=0;startSize=30;horizontal=1;" value="&lt;font style=&quot;font-size: 8px;&quot;&gt;HARVEST (収穫)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="60" width="120" x="348" y="1671" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-166" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="yes" vertex="1">
+          <mxGeometry height="30" width="60" x="350.5" y="1641" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-167" edge="1" parent="1" source="wSkbzXtgzg5KCMsMg299-168" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="wSkbzXtgzg5KCMsMg299-171" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-168" parent="1" style="rhombus;whiteSpace=wrap;html=1;fontStyle=0;startSize=30;horizontal=1;" value="&lt;font style=&quot;font-size: 8px;&quot;&gt;今日の水やりがまだ？&lt;/font&gt;" vertex="1">
+          <mxGeometry height="80" width="115" x="523" y="1571" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-169" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="yes" vertex="1">
+          <mxGeometry height="30" width="60" x="518" y="1551" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-170" edge="1" parent="1" source="wSkbzXtgzg5KCMsMg299-161" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.502;exitY=0.969;exitDx=0;exitDy=0;exitPerimeter=0;" target="wSkbzXtgzg5KCMsMg299-168" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="410.5" y="1552" />
+              <mxPoint x="582.5" y="1552" />
+            </Array>
+            <mxPoint x="442.5" y="1552" as="sourcePoint" />
+            <mxPoint x="492.5" y="1622" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-171" parent="1" style="whiteSpace=wrap;html=1;fontStyle=0;startSize=30;horizontal=1;" value="&lt;font style=&quot;font-size: 8px;&quot;&gt;WATER (水やり)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="60" width="120" x="520.5" y="1671" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-172" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="yes" vertex="1">
+          <mxGeometry height="30" width="60" x="520.5" y="1641" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-173" parent="1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="2. やることがない場合の移動&lt;div&gt;レーダーで畑全体をスキャン&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="230" x="307.5" y="1762" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-174" edge="1" parent="1" source="wSkbzXtgzg5KCMsMg299-176" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="wSkbzXtgzg5KCMsMg299-177" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-175" edge="1" parent="1" source="wSkbzXtgzg5KCMsMg299-176" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="wSkbzXtgzg5KCMsMg299-178" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="268.5" y="1851.9999999999998" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-176" parent="1" style="rhombus;whiteSpace=wrap;html=1;fontStyle=0;startSize=30;horizontal=1;" value="&lt;font style=&quot;font-size: 8px;&quot;&gt;目的地が見つかった？&lt;/font&gt;" vertex="1">
+          <mxGeometry height="80" width="115" x="348.5" y="1812" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-177" parent="1" style="whiteSpace=wrap;html=1;fontStyle=0;startSize=30;horizontal=1;" value="&lt;font style=&quot;font-size: 8px;&quot;&gt;目的地へ最短で1歩進む&lt;/font&gt;" vertex="1">
+          <mxGeometry height="60" width="120" x="346" y="1912" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-178" parent="1" style="whiteSpace=wrap;html=1;fontStyle=0;startSize=30;horizontal=1;" value="&lt;font style=&quot;font-size: 8px;&quot;&gt;PASS (待機)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="60" width="120" x="182.5" y="1912" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-179" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="yes" vertex="1">
+          <mxGeometry height="30" width="60" x="362.5" y="1882" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-180" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="no" vertex="1">
+          <mxGeometry height="30" width="60" x="302.5" y="1822" as="geometry" />
+        </mxCell>
+        <mxCell id="wSkbzXtgzg5KCMsMg299-181" edge="1" parent="1" source="wSkbzXtgzg5KCMsMg299-161" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="410.5" y="1450" />
+              <mxPoint x="410.5" y="1450" />
+            </Array>
+            <mxPoint x="409.24" y="1449.5" as="sourcePoint" />
+            <mxPoint x="410.4899999999999" y="1572" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
