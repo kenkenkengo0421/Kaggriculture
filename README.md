@@ -1,5 +1,5 @@
 
-# Kaggriculture
+# [Kaggriculture](https://www.kaggle.com/competitions/kaggriculture)
 
 ### [詳細はここ data/jp_readme.md](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/data/jp_readme.md)
 
@@ -8,7 +8,7 @@
 
 ### [jsonのログの内訳](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/plot/json_file_log.md)
 
-### [jsonのログ可視化](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/plot/plt.ipynb)
+
 
 
 
@@ -87,7 +87,7 @@
 </details>
 
 
-### コマンド
+### 4.コマンド
 
 <details><summary></summary>
 
@@ -120,7 +120,7 @@
 
 
 
-## 4. 市場経済と価格変動メカニズム
+## 5. 市場経済と価格変動メカニズム
 
 <details><summary></summary>
 
