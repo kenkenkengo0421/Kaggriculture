@@ -1,5 +1,6 @@
 
 
+
 import json
 import pandas as pd
 
@@ -14,6 +15,14 @@ class Kaggriculture_df:
 
         <out>:
         df,
+        from kaggriculture_df import Kaggriculture_df
+
+        df = (Kaggriculture_df("/content/90295581.json", 0)).df
+        df2 = (Kaggriculture_df("/content/90295581.json", 1)).df
+
+        df.to_csv("test0.csv", index=False, encoding="utf-8")
+        df2.to_csv("test1.csv", index=False, encoding="utf-8")
+
         """
 
         with open(json_file, 'r', encoding='utf-8') as f:
