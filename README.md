@@ -8,6 +8,8 @@
 
 ### [jsonのログの内訳](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/json_file_log.md)
 
+### [json=>df クラス群](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/Kaggriculture_Movements_in_the_top_xx%25/column.md)
+
 
 
 
@@ -15,27 +17,6 @@
 ### 環境
 
 ```google_colab```
-
-## スコア
-
-<details><summary></summary>
-
-| Ver  | Score   |
-| ---- | ------- |
-|v0.0| 200-600 |
-|v0.1|268 – 600|
-|v0.2|234 – 600|
-|v0.3|294 – 600|
-|v0.4|316 – 600|
-|v0.5|301 – 600|
-|v0.6|418 – 600|
-|v0.7|388 – 600|
-|v0.8|492 – 625|
-|v0.9|417 – 600|
-|v1.0|460 – 600|
-|v1.1|474 – 600|
-
-</details>
 
 
 
