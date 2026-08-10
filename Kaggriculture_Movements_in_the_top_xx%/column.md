@@ -9,6 +9,7 @@ dir
   |__sub_main.ipynb
   |__split_zip_file.py
   |__dir_to_strong.py
+  |__dirtobeginner.py
   |__kaggriculture_df.py
   |__archive.zip
 ```
@@ -17,13 +18,14 @@ dir
 ### 各クラス、ファイル
   
 
-|**ファイル名**|**説明**|**引数**|
-|---------|---------|---------|
-|[sub_main.ipynb](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/Kaggriculture_Movements_in_the_top_xx%25/sub_main.ipynb)|メイン|なし🍗|
-|[split_zip_file.py](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/Kaggriculture_Movements_in_the_top_xx%25/split_zip_file.py)|データが20GBと巨大なため、分割します|`<folder_path>`: （展開後の大容量フォルダのパス）<br><br>`<num_splits>`: 分割数<br><br>*30を推奨します。20ではクラッシュしました。|
-|[dir_to_strong.py](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/Kaggriculture_Movements_in_the_top_xx%25/dir_to_strong.py)|分割されたディレクトリとファイルから、最終ステップでの手持ち現金が上位xx%のプレイヤーのみを抽出します|`<target_dir>`: 分割フォルダを含むルートディレクトリのパス（例: `/content/data`）<br><br>`<output_dir>`: 出力ディレクトリの名前<br><br>`<top_percent>`: 抽出する上位の割合（例: 0.02は上位2%を意味します）|
-|[kaggriculture_df.py](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/Kaggriculture_Movements_in_the_top_xx%25/kaggriculture_df.py)|JSONをパースしてデータフレームに変換するクラス|`<jsonfile>`: JSONファイルのパス<br><br>`<player_num>`: JSONファイル内の2人のプレイヤーのうち、どちらをDFに設定するか<br><br>*トップランキングを忠実に再現するには、DirToStrongによって生成されたファイル名を使用してください：<br><br>`Kaggriculture_df(“/st_data/strong_rank1_score157577.0.json,”)`<br><br>*使用例については、メインの使用方法の説明をご覧ください。|
-|archive.zip|このコンペティション用のデータセット|記載なし|
+| **ファイル名**                                                                                                                                      | **説明**                                                          | **引数**                                                                                                                                                                                                                                                         |
+| ---------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [sub_main.ipynb](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/Kaggriculture_Movements_in_the_top_xx%25/sub_main.ipynb)           | メイン                                                             | なし🍗                                                                                                                                                                                                                                                           |
+| [split_zip_file.py](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/Kaggriculture_Movements_in_the_top_xx%25/split_zip_file.py)     | データが20GBと巨大なため、分割します                                            | `<folder_path>`: （展開後の大容量フォルダのパス）<br><br>`<num_splits>`: 分割数<br><br>*30を推奨します。20ではクラッシュしました。                                                                                                                                                                   |
+| [dir_to_strong.py](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/Kaggriculture_Movements_in_the_top_xx%25/dir_to_strong.py)       | 分割されたディレクトリとファイルから、最終ステップでの手持ち現金が上位xx%のプレイヤーのみを抽出します            | `<target_dir>`: 分割フォルダを含むルートディレクトリのパス（例: `/content/data`）<br><br>`<output_dir>`: 出力ディレクトリの名前<br><br>`<top_percent>`: 抽出する上位の割合（例: 0.02は上位2%を意味します）                                                                                                             |
+| [kaggriculture_df.py](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/Kaggriculture_Movements_in_the_top_xx%25/kaggriculture_df.py) | JSONをパースしてデータフレームに変換するクラス                                       | `<jsonfile>`: JSONファイルのパス<br><br>`<player_num>`: JSONファイル内の2人のプレイヤーのうち、どちらをDFに設定するか<br><br>*トップランキングを忠実に再現するには、DirToStrongによって生成されたファイル名を使用してください：<br><br>`Kaggriculture_df(“/st_data/strong_rank1_score157577.0.json,”)`<br><br>*使用例については、メインの使用方法の説明をご覧ください。 |
+| [dirtobeginner.py](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/Kaggriculture_Movements_in_the_top_xx%25/dirtobeginner.py)       | 分割されたディレクトリとファイルから、最終ステップでの手持ち現金が上位ではなくピンポイントでxx%のプレイヤーのみを抽出します | `<target_dir>`: 分割フォルダを含むルートディレクトリのパス（例: `/content/data`）<br><br>`<output_dir>`: 出力ディレクトリの名前<br><br>`<top_percent>`: 抽出する割合（例: 0.02はピンポイント2%を意味します）15人に厳選されます                                                                                                  |
+| archive.zip                                                                                                                                    | このコンペティション用のデータセット                                              | 記載なし                                                                                                                                                                                                                                                           |
 
 
 ### 基本項目
