@@ -5,12 +5,13 @@ import pandas as pd
 import seaborn as sns
 import math
 
-"""
-ヒストグラム（全体を見るとき）
-Hist(data=<DF>, column_name=<DFのcolumn>, bins=<bins>, figsize=(<横大きさ,縦大きさ>), step=<区切り>)
 
-"""
 class Hist:
+    """
+    ヒストグラム（全体を見るとき）
+    Hist(data=<DF>, column_name=<DFのcolumn>, bins=<bins>, figsize=(<横大きさ,縦大きさ>), step=<区切り>)
+
+    """
     def __init__(self, data, column_name, bins=30, figsize=(10, 10), step=1):
         self.df = pd.DataFrame(data)
         self.column_name = column_name
@@ -29,17 +30,19 @@ class Hist:
 
 
 
-"""
-ヒストグラム ( snsバージョン )
-sns_Hist(data=<DF>, x=<横軸>, hue=<基準のcolumn>, figsize=(<横大きさ,縦大きさ>), step=<区切り>)
-"""
+
 class sns_Hist:
-    def __init__(self, data, x, hue, figsize=(10, 10), step=1):
+    """
+    ヒストグラム ( snsバージョン )
+    sns_Hist(data=<DF>, x=<横軸>, hue=<基準のcolumn>, figsize=(<横大きさ,縦大きさ>), step=<区切り>, bins=<棒の数>)
+    """
+    def __init__(self, data, x, hue, figsize=(10, 10), step=1, bins=None):
         self.df = pd.DataFrame(data)
         self.x = x
         self.hue = hue
         self.figsize = figsize
         self.step = step
+        self.bins = bins
         self._show_plot()
 
     def _show_plot(self):
@@ -52,26 +55,28 @@ class sns_Hist:
         sns.histplot(data=plot_df,
                      x=self.x,
                      hue=self.hue,
-                     multiple='stack'
+                     multiple='stack',
+                     bins=self.bins
                      )
         min_val = int(plot_df[self.x].min())
         max_val = int(plot_df[self.x].max())
         plt.xticks(np.arange(min_val, max_val + 1, self.step))    
         plt.show()
 
-"""
- KDEプロット(滑らかなヒストグラム)
-sns_kde(data=<DF>,
+
+
+
+class sns_kde:
+    """
+    KDEプロット(滑らかなヒストグラム)
+    sns_kde(data=<DF>,
         x=<横軸>,
         hue=<基準のcolumn>,
         fill=<True>,                    #塗りつぶすかどうか
         common_norm=<False>,　　　　　　 #よくわからん 
         figsize=(<横大きさ,縦大きさ>),
         step=<区切り>)
-"""
-
-
-class sns_kde:
+    """
     def __init__(self, data, x, hue, fill=True, common_norm=False, figsize=(10, 10), step=1):
         self.df = pd.DataFrame(data)
         self.x = x
@@ -101,19 +106,20 @@ class sns_kde:
         plt.show()
 
 
-"""
-文字列の値をカウント(棒グラフ)
-目的変数と比べる。
 
-sns_countplot(data=<df>,
-              x=<DFのcolumn>,
-              hue=<基準のcolumn>,
-              figsize=(<横大きさ,縦大きさ>),
-              y_step=<区切り>)
-"""
 
 
 class sns_countplot:
+    """
+    文字列の値をカウント(棒グラフ)
+    目的変数と比べる。
+
+    sns_countplot(data=<df>,
+                x=<DFのcolumn>,
+                hue=<基準のcolumn>,
+                figsize=(<横大きさ,縦大きさ>),
+              　y_step=<区切り>)
+    """
     def __init__(self, data, x, hue=None, figsize=(5, 10), y_step=10000):
         self.df = pd.DataFrame(data)
         self.x = x
@@ -136,17 +142,14 @@ class sns_countplot:
         plt.show() 
 
 
-#======
-
-"""
-折れ線グラフ
-
-sns_line(df, x='step', y='money', step=100)
-
-"""
-
 
 class sns_line:
+    """
+    折れ線グラフ
+
+    sns_line(df, x='step', y='money', step=100)
+
+    """
     def __init__(self, data, x, y, hue=None, figsize=(15, 5), step=100):
         self.df = pd.DataFrame(data)
         self.x = x
@@ -178,29 +181,29 @@ class sns_line:
         plt.show() 
 
 
-"""
-折れ線グラフ複数の項目
 
-見たい項目をリストにまとめる
-
-cols_to_plot = [
-    'money', 
-    'wheat_price', 
-    'melon_price', 
-    'wheat_in_shed', 
-    'melon_in_shed'
-]
-
-クラスを1回呼ぶだけ！
-
-sns_line_s(df, x='step', y=cols_to_plot, step=30)
-"""
 
 class sns_line_s:
+    """
+    折れ線グラフ複数の項目
+
+    見たい項目をリストにまとめる
+
+    cols_to_plot = [
+        'money', 
+        'wheat_price', 
+        'melon_price', 
+        'wheat_in_shed', 
+        'melon_in_shed'
+    ]
+
+    クラスを1回呼ぶだけ
+
+    sns_line_s(df, x='step', y=cols_to_plot, step=30)
+    """
     def __init__(self, data, x, y, hue=None, step=100):
         self.df = pd.DataFrame(data)
         self.x = x
-        # yが単一の文字ならリストに変換、すでにリストならそのまま受け取る
         self.y = [y] if isinstance(y, str) else y 
         self.hue = hue
         self.step = step
@@ -209,18 +212,17 @@ class sns_line_s:
     def _show_plot(self):
         matplotlib.style.use('bmh')
         
-        # グラフの数を数えて、自動的に行数と列数（最大3列）を計算する
+        
         n_plots = len(self.y)
         ncols = min(3, n_plots)
         nrows = math.ceil(n_plots / ncols)
         
-        # グラフの枠のサイズも自動でいい感じにする
+        
         fig_width = ncols * 7
         fig_height = nrows * 5
         
         fig, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=(fig_width, fig_height))
         
-        # 扱いやすいように枠(axes)を1次元のリストにする
         if n_plots == 1:
             axes = [axes]
         else:
