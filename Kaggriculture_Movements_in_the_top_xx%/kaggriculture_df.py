@@ -67,27 +67,6 @@ class Kaggriculture_df:
                     "market_inv": p["market"]["inventory"],#市場の在庫数
                     "market_prices": p["market"]["prices"],#現在の価格
 
-                    """
-                    "market_inv_CARROT": p["market"]["inventory"]["CARROT"],#ニンジン
-                    "market_inv_EGG": p["market"]["inventory"]["EGG"],#たまご
-                    "market_inv_FERTILIZER": p["market"]["inventory"]["FERTILIZER"],#肥料
-                    "market_inv_MELON": p["market"]["inventory"]["MELON"],#メロン
-                    "market_inv_MILK": p["market"]["inventory"]["MILK"],#ミルク
-                    "market_inv_STRAWBERRY": p["market"]["inventory"]["STRAWBERRY"],#イチゴ
-                    "market_inv_TOMATO": p["market"]["inventory"]["TOMATO"],#トマト
-                    "market_inv_WHEAT": p["market"]["inventory"]["WHEAT"],#小麦
-                    "market_inv_WOOL": p["market"]["inventory"]["WOOL"],#ウール
-
-                    "market_prices_CARROT": p["market"]["prices"]["CARROT"],#
-                    "market_prices_EGG": p["market"]["prices"]["EGG"],#
-                    "market_prices_FERTILIZER": p["market"]["prices"]["FERTILIZER"],#
-                    "market_prices_MELON": p["market"]["prices"]["MELON"],#
-                    "market_prices_MILK": p["market"]["prices"]["MILK"],#
-                    "market_prices_STRAWBERRY": p["market"]["prices"]["STRAWBERRY"],#
-                    "market_prices_TOMATO": p["market"]["prices"]["TOMATO"],#
-                    "market_prices_WHEAT": p["market"]["prices"]["WHEAT"],#
-                    "market_prices_WOOL": p["market"]["prices"]["WOOL"],#
-                    """
 
                     "farmer_action": step_list[player_num]["action"]["farmer"],#メイン農家の行動
                     "hands_action": step_list[player_num]["action"]["hands"],#労働者の行動
