@@ -1,17 +1,23 @@
 
+
+
 # [Kaggriculture](https://www.kaggle.com/competitions/kaggriculture)
 
-### [詳細はここ data/jp_readme.md](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/data/jp_readme.md)
+### ルール
+
+[コンペのルール、仕様和訳版](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/data/jp_readme.md)
 
 
-### 分析フォルダ
-
-### [jsonのログの内訳](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/json_file_log.md)
-
-### [json=>df クラス群](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/Kaggriculture_Movements_in_the_top_xx%25/column.md)
+### ファイル
 
 
-
+|名称|ファイル名|備考|
+|-----|-----|-----|
+|[jsonのログの内訳](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/json_file_log.md)|`json_file_log.md`||
+|[使用した関数、クラス群](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/Kaggriculture_Movements_in_the_top_xx%25/column.md)|`column.md`||
+|[提出関数(メイン)](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/main.ipynb)|`main.ipynb`||
+|[分割コード](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/Kaggriculture_Movements_in_the_top_xx%25/sub_main.ipynb)|`sub_main.ipynb`||
+|[社長と従業員の動き](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/Kaggriculture_Movements_in_the_top_xx%25/range_of_action.ipynb)|`range_of_action.ipynb`||
 
 
 ### 環境
@@ -118,5 +124,71 @@ Kaggricultureの最も難しいポイントは、価格が共有の「市場在�
 | **需要増加（買い・町）** | プレイヤーが買う、または「町の施設」が消費すると在庫が減り、価格が高騰します。           | 小麦などの**必需品**は、品薄になると価格が急騰しやすい関数（sqrt/log）が設定されています。    |
 | **町の施設の消費**    | 3日ごとに新しいショップが解放され、市場の在庫を4ターンごとに自動で消費し続けます。        | 後半になればなるほど町の消費（需要）が激しくなり、全体の価格が押し上げられるインフレ傾向になります。     |
 
+
+</details>
+
+## 6. DF変換後の列名
+
+<details><summary></summary>
+
+### 基本項目
+
+| **column名**                  | **説明**         |
+| ---------------------------- | -------------- |
+| `["step"]`                     |                |
+| `["day"]`                      |                |
+| `["money"]`                    | プレイヤー0の所持金     |
+| `["tiles"]`                    | 10x10のマス目の状態   |
+| `["farmer_x_y"]`              | 自分の座標          |
+| `["hands_n"]`                  | 労働者の人数         |
+| `["hires_today"]`              | 本日採用した人数       |
+| `["unlocked_quadrants"]`       | アンロックした土地サブセット |
+| `["private_shed"]`             | 小屋の収穫物在庫       |
+| `["private_seeds"]`            | 所持している種の数      |
+| `["market_inv"]`               | 市場の在庫数         |
+| `["market_prices"]`            | 現在の価格          |
+| `["farmer_action"]`            | メイン農家の行動       |
+| `["hands_action"]`             | 労働者の行動         |
+| `["market_action"]`            | 市場での売買・雇用アクション |
+
+### 労働者n座標
+
+| **column名**       | **説明**  |
+| ----------------- | ------- |
+| `["hands_list_1"]`  | 労働者1座標  |
+| `["hands_list_2"]`  | 労働者2座標  |
+| `["hands_list_3"]`  | 労働者3座標  |
+|.|.|
+|.|.|
+|.|.| 
+| `["hands_list_20"]` | 労働者20座標 |
+
+### 労働者nの行動
+
+| **column名**              | **説明**   |
+| ------------------------ | -------- |
+| `["hands_action_list_1"]`  | 労働者1の行動  |
+| `["hands_action_list_2"]` | 労働者2の行動  |
+| `["hands_action_list_3"]`  | 労働者3の行動  |
+|.|.|
+|.|.|
+|.|.|                         
+| `["hands_action_list_20"]` | 労働者20の行動 |
+
+### 売買品
+
+```py
+
+"CARROT",#ニンジン
+"EGG",#たまご
+"FERTILIZER",#肥料
+"MELON",#メロン
+"MILK",#ミルク
+"STRAWBERRY",#イチゴ
+"TOMATO",#トマト
+"WHEAT",#小麦
+"WOOL",#ウール
+
+```
 
 </details>
