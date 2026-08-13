@@ -20,6 +20,6 @@
 ||df[""]をヒートマップに変換：複数|xy_plt_2d_all(df, cols, n_rows, n_cols)<br>`<df>`:2D配列のdf[x,y]<br>`xy_plt_2d_all(df_st, ["hands_list_1", "hands_list_2"], 1, 2)`|
 ||["hands_list_1"] 〜 ["hands_list_20"] を合算し<br>"all_hands" 列を作成する|`create_all_hands_feature(df)`|
 ||df[""]をヒートマップに変換：複数座標の合算専用|`<df>`: 複数座標のdf[[x,y], [x,y]...] (例: all_hands)|
-
+|[my_plot.py](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/my_plot.py)|グラフを描画||
 
 
