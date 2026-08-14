@@ -184,16 +184,15 @@ class sns_line:
 class sns_line_smooth:
     """
     折れ線グラフ（なめらか）
-
-
     """
-    def __init__(self, data, x, y, hue=None, figsize=(15, 5), step=100):
+    def __init__(self, data, x, y, hue=None, figsize=(15, 5), step=100, ylim=None):
         self.df = pd.DataFrame(data)
         self.x = x
         self.y = y          
         self.hue = hue
         self.figsize = figsize
         self.step = step
+        self.ylim = ylim 
         self._show_plot()
 
     def _show_plot(self):
@@ -215,11 +214,53 @@ class sns_line_smooth:
         min_val = int(plot_df[self.x].min())
         max_val = int(plot_df[self.x].max())
         plt.xticks(np.arange(min_val, max_val + 1, self.step))
+
+        if self.ylim is not None:
+            plt.ylim(self.ylim)
         
         plt.xlabel(self.x)
         plt.ylabel(self.y)
         plt.title(f"{self.y} over {self.x}")
         plt.show()
+
+
+
+class sns_2_line_smooth:
+    """
+    折れ線グラフ（なめらか・重ね書き対応）
+    
+    # ① グラフのサイズを決める（クラスから移動してきた2行）
+    plt.figure(figsize=(10, 5))
+
+    # ② データを重ねて描く
+    sns_2_line_smooth(df_st_cost, x='day', y="money", label="st", step=1)
+    sns_2_line_smooth(df_be_cost, x='day', y="money", label="be", step=1)
+
+    # ③ 軸の設定や表示を行う
+    plt.ylim(0, 150000) 
+    plt.legend() 
+    plt.show()
+    """
+    def __init__(self, data, x, y, label, step=100):
+        self.df = pd.DataFrame(data)
+        self.x = x
+        self.y = y          
+        self.label = label
+        self.step = step
+        self._plot()
+
+    def _plot(self):
+        plot_df = self.df.dropna(subset=[self.x, self.y])
+
+        grouped = plot_df.groupby(self.x)[self.y].mean().sort_index()
+        x_vals = grouped.index.values
+        y_vals = grouped.values
+
+        x_smooth = np.linspace(x_vals.min(), x_vals.max(), 300)
+        spl = make_interp_spline(x_vals, y_vals, k=3)
+        y_smooth = spl(x_smooth)
+
+        plt.plot(x_smooth, y_smooth, label=self.label)
 
 
 
