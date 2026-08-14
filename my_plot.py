@@ -4,7 +4,7 @@ import matplotlib.style
 import pandas as pd
 import seaborn as sns
 import math
-
+from scipy.interpolate import make_interp_spline
 
 class Hist:
     """
@@ -179,6 +179,47 @@ class sns_line:
         
         plt.title(f"{self.y} over {self.x}") # わかりやすくタイトルを追加
         plt.show() 
+
+
+class sns_line_smooth:
+    """
+    折れ線グラフ（なめらか）
+
+
+    """
+    def __init__(self, data, x, y, hue=None, figsize=(15, 5), step=100):
+        self.df = pd.DataFrame(data)
+        self.x = x
+        self.y = y          
+        self.hue = hue
+        self.figsize = figsize
+        self.step = step
+        self._show_plot()
+
+    def _show_plot(self):
+        matplotlib.style.use('bmh')
+        plt.figure(figsize=self.figsize)
+
+        plot_df = self.df.dropna(subset=[self.x, self.y])
+
+        grouped = plot_df.groupby(self.x)[self.y].mean().sort_index()
+        x_vals = grouped.index.values
+        y_vals = grouped.values
+
+        x_smooth = np.linspace(x_vals.min(), x_vals.max(), 300)
+        spl = make_interp_spline(x_vals, y_vals, k=3)  # 3次スプライン曲線
+        y_smooth = spl(x_smooth)
+
+        plt.plot(x_smooth, y_smooth)
+
+        min_val = int(plot_df[self.x].min())
+        max_val = int(plot_df[self.x].max())
+        plt.xticks(np.arange(min_val, max_val + 1, self.step))
+        
+        plt.xlabel(self.x)
+        plt.ylabel(self.y)
+        plt.title(f"{self.y} over {self.x}")
+        plt.show()
 
 
 
