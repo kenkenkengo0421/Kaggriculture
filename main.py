@@ -81,6 +81,18 @@ def get_tile_action(tile, day):
     if tile.get("kind") == "WEED":
         return ["DIG"]
 
+    if "animal" in tile:
+        if not tile.get("fed_today", False):
+            return ["FEED"]
+
+        if not tile.get("cared_today", False):
+            return ["CARE"]
+
+        if tile.get("yield_units", 0) > 0:
+            return ["HARVEST"]
+
+        return None
+    
     if tile.get("kind") != "PLANT":
         return None
 
@@ -175,6 +187,18 @@ def find_target_tile(
                     continue
 
                 base_score = 0
+
+            #動物
+            elif isinstance(tile, dict) and "animal" in tile:
+                if not tile.get("fed_today", False):
+                    base_score = 100
+                
+                elif not tile.get("cared_today", False):
+                    base_score = 75
+
+                elif tile.get("yield_units", 0) > 0:
+                    base_score = 60
+
 
             # 植物
             elif isinstance(tile, dict) and tile.get("kind") == "PLANT":
@@ -320,6 +344,8 @@ def agent(obs, config):
 
     has_seeds = (wheat_seeds > 0 or melon_seeds > 0)
 
+    inventories = private.get("inventories", [])
+
     # 市場
 
     market = build_market_actions(
@@ -389,6 +415,7 @@ def agent(obs, config):
 
     for hand in current_hands:
         hx, hy = hand
+
         hand_tile = tiles[hy][hx]
 
         if hand_tile is None:
