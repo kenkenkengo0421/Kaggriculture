@@ -81,7 +81,7 @@ def get_tile_action(tile, day):
     if tile.get("kind") == "WEED":
         return ["DIG"]
 
-    if "animal" in tile:
+    if tile.get("animal"):
         if not tile.get("fed_today", False):
             return ["FEED"]
 
@@ -90,6 +90,9 @@ def get_tile_action(tile, day):
 
         if tile.get("yield_units", 0) > 0:
             return ["HARVEST"]
+
+        if tile.get("fertilizer_available", 0) > 0:
+            return ["COLLECT_FERTILIZER"]
 
         return None
 
@@ -151,6 +154,34 @@ def step_toward(fx, fy, tx, ty, tiles):
 
     return "PASS"
 
+def find_empty_coop(
+    tiles,
+    fx,
+    fy,      
+):
+    """現在位置から最も近い空のcoopを返す"""
+
+    best_target = None
+    best_distance = 9999
+
+    for y in range(len(tiles)):
+        for x in range(len(tiles[0])):
+
+            tile = tiles[y][x]
+
+            if(
+                isinstance(tile, dict)
+                and tile.get("kind") == "COOP"
+                and  not tile.get("animal")
+            ):
+                distance = (abs(x - fx) + abs(y - fy))
+
+                if distance < best_distance:
+                    best_distance = distance
+                    best_target = (x, y)
+
+    return best_target
+
 
 def find_target_tile(
     tiles,
@@ -189,7 +220,7 @@ def find_target_tile(
                 base_score = 0
 
             #動物
-            elif isinstance(tile, dict) and "animal" in tile:
+            elif isinstance(tile, dict) and tile.get("animal"):
                 if not tile.get("fed_today", False):
                     base_score = 100
 
@@ -198,6 +229,9 @@ def find_target_tile(
 
                 elif tile.get("yield_units", 0) > 0:
                     base_score = 60
+                
+                elif tile.get("fertilizer_available", 0) > 0:
+                    base_score = 55
 
 
             # 植物
@@ -243,6 +277,7 @@ def build_market_actions(
     step,
     melon_price,
     melon_stock,
+    goose_count,
 ):
     """現在の市場売買・雇用・土地購入ルールから注文一覧を作る。"""
 
@@ -315,11 +350,14 @@ def build_market_actions(
     #gooseを飼う
     goose_in_shed = shed.get("GOOSE", 0)
 
-    if len(unlocked_quads) >= 1 and goose_in_shed == 0 and money >= 300:
+    if(
+        len(unlocked_quads) >= 1
+        and goose_count == 0
+        and money >= 300
+    ):
         market.append(
             ["BUY_ANIMAL", "GOOSE", 1]
         )
-    
 
     return market
 
@@ -343,6 +381,7 @@ def agent(obs, config):
 
     day = obs.get("day", 0)
     step = obs.get("step", 0)
+    hour = obs.get("hour", 0)
 
     current_hands = me.get("hands", [])
 
@@ -364,10 +403,22 @@ def agent(obs, config):
     farmer_goose = famer_inventory.get("GOOSE", 0)
 
     coop_count = 0
+    
     for row in tiles:
         for tile in row:
             if isinstance(tile, dict) and tile.get("kind") == "COOP":
                 coop_count += 1
+
+    goose_count = 0
+
+    for row in tiles:
+        for tile in row:
+            if (
+                isinstance(tile, dict) and tile.get("animal") == "GOOSE"
+            ):
+                goose_count += 1
+    goose_count += shed.get("GOOSE", 0)
+    goose_count += farmer_goose
 
 
     # 市場
@@ -380,6 +431,7 @@ def agent(obs, config):
         step,
         melon_price,
         melon_stock,
+        goose_count,
     )
 
     # メイン農家
@@ -387,11 +439,52 @@ def agent(obs, config):
     farmer_action = None
     goose_in_shed = shed.get("GOOSE", 0)
 
-    if farmer_tile is None:
+    if farmer_goose > 0:
+        if (
+            isinstance(farmer_tile, dict)
+            and farmer_tile.get("kind") == "COOP"
+            and not farmer_tile.get("animal")
+        ):
+            farmer_action = [
+                "PLACE",
+                "GOOSE"
+            ]
+        else:
+            coop_target = find_empty_coop(
+                tiles,
+                fx,
+                fy
+            )
+
+            if coop_target is not None:
+                move_dir = step_toward(
+                    fx,
+                    fy,
+                    coop_target[0],
+                    coop_target[1],
+                    tiles,
+                )
+
+                farmer_action = [
+                    move_dir
+                ]
+
+    elif(
+        goose_in_shed > 0
+        and coop_count > 0
+        and hour == 0
+    ):
+        farmer_action = [
+            "PICKUP",
+            "GOOSE",
+            1,
+        ]    
+
+    elif farmer_tile is None:
         if goose_in_shed > 0 and coop_count < 1:
             farmer_action = [
                 "BUILD_COOP",
-            ]    
+            ]
 
         elif melon_seeds > 0:
             farmer_action = [
@@ -403,16 +496,7 @@ def agent(obs, config):
                 "PLANT",
                 "WHEAT",
             ]
-    elif (
-        isinstance(farmer_tile, dict)
-        and farmer_tile.get("kind") == "COOP"
-        and "animal" not in farmer_tile
-        and farmer_goose > 0
-    ):
-        farmer_action = [
-            "PLACE",
-            "GOOSE"
-        ]
+
 
     else:
         farmer_action = get_tile_action(
@@ -450,6 +534,18 @@ def agent(obs, config):
             (fx, fy)
         )
 
+    for y in range(len(tiles)):
+        for x in range(len(tiles[0])):
+            tile = tiles[y][x]
+
+            if(
+                isinstance(tile, dict)
+                and tile.get("animal")
+            ):
+                claimed_targets.add(
+                    (x, y)
+                )
+
     # 作業員
 
     hands_actions = []
@@ -459,7 +555,13 @@ def agent(obs, config):
 
         hand_tile = tiles[hy][hx]
 
-        if hand_tile is None:
+        if(
+            isinstance(hand_tile, dict)
+            and hand_tile.get("animal")
+        ):
+            hand_action = None
+
+        elif hand_tile is None:
             if melon_seeds > 0:
                 hand_action = [
                     "PLANT",
