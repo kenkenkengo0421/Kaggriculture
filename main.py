@@ -88,11 +88,11 @@ def get_tile_action(tile, day):
     crop_age = day - tile.get("planted_day", day)
     harvest_age = get_harvest_age(crop_name)
 
-    if crop_age >= harvest_age:
-        return ["HARVEST"]
-
     if not tile.get("watered_today", True):
         return ["WATER"]
+
+    if crop_age >= harvest_age:
+        return ["HARVEST"]
 
     return None
 
@@ -276,6 +276,10 @@ def build_market_actions(
         market.append(
             ["HIRE"]
         )
+    if total_people < 10 and money >= 15000:
+        market.append(
+            ["HIRE"]
+        )
     
     # 土地購入
     if len(unlocked_quads) < 2 and money >= 15000:
@@ -386,10 +390,25 @@ def agent(obs, config):
     for hand in current_hands:
         hx, hy = hand
         hand_tile = tiles[hy][hx]
-        hand_action = get_tile_action(
-            hand_tile,
-            day,
-        )
+
+        if hand_tile is None:
+            if melon_seeds > 0:
+                hand_action = [
+                    "PLANT",
+                    "MELON",
+                ]
+            elif wheat_seeds > 0:
+                hand_action = [
+                    "PLANT",
+                    "WHEAT",
+                ]
+            else:
+                hand_action = None
+        else:
+            hand_action = get_tile_action(
+                hand_tile,
+                day,
+            )
         if hand_action is None:
             target = find_target_tile(
                 tiles,
