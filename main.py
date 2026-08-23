@@ -437,7 +437,7 @@ def agent(obs, config):
 
     farmer_wheat = famer_inventory.get("WHEAT", 0)
     farmer_fertilizer = famer_inventory.get("FERTILIZER", 0)
-
+    farmer_egg = famer_inventory.get("EGG", 0)
 
     coop_count = 0
 
@@ -477,7 +477,17 @@ def agent(obs, config):
     farmer_action = None
     goose_in_shed = shed.get("GOOSE", 0)
 
-    if farmer_goose > 0:
+    if step >= 710 and farmer_egg > 0:
+        if (fx, fy) == (4, 4):
+            farmer_action = ["PLACE", "EGG", farmer_egg,]
+
+        else:
+            move_dir = step_toward(fx, fy, 4, 4, tiles)
+            farmer_action = [move_dir]
+        
+        
+
+    elif farmer_goose > 0:
         if (
             isinstance(farmer_tile, dict)
             and farmer_tile.get("kind") == "COOP"
