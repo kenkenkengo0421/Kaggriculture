@@ -326,7 +326,7 @@ def build_market_actions(
     egg_in_shed = shed.get("EGG", 0)
 
     # 種を購入
-    if day < 8 and money >= 500:
+    if day < 5 and money >= 500:
         if melon_seeds == 0:
             market.append(["BUY_SEED", "MELON", 10])
 
@@ -422,7 +422,7 @@ def agent(obs, config):
     remaining_wheat_seeds = wheat_seeds
     remaining_melon_seeds = melon_seeds
 
-    melon_plant_allowed = day < 8
+    melon_plant_allowed = day < 5
 
     wheat_in_shed = shed.get("WHEAT", 0)
 
@@ -537,7 +537,7 @@ def agent(obs, config):
 
         elif remaining_wheat_seeds > 0:
             farmer_action = ["PLANT", "WHEAT",]
-            remaining_wheat_seeds -= 1  
+            remaining_wheat_seeds -= 1
 
     else:
         farmer_action = get_tile_action(farmer_tile, day,)
@@ -625,7 +625,7 @@ def agent(obs, config):
         ):
             hand_action = None
 
-        elif hand_tile is None:           
+        elif hand_tile is None:
             if melon_plant_allowed and remaining_melon_seeds > 0:
                 hand_action = ["PLANT", "MELON",]
                 remaining_melon_seeds -= 1
