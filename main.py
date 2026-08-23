@@ -157,7 +157,7 @@ def step_toward(fx, fy, tx, ty, tiles):
 def find_empty_coop(
     tiles,
     fx,
-    fy,      
+    fy,
 ):
     """現在位置から最も近い空のcoopを返す"""
 
@@ -229,7 +229,7 @@ def find_target_tile(
 
                 elif tile.get("yield_units", 0) > 0:
                     base_score = 60
-                
+
                 elif tile.get("fertilizer_available", 0) > 0:
                     base_score = 55
 
@@ -299,21 +299,28 @@ def build_market_actions(
     # 種を購入
     if money >= 500:
         if melon_seeds == 0:
-            market.append(
-                ["BUY_SEED", "MELON", 10]
-            )
-
+            market.append(["BUY_SEED", "MELON", 10])
 
     if wheat_seeds == 0 and money >= 10:
-        market.append(
-            ["BUY_SEED", "WHEAT", 3]
-        )
+        market.append(["BUY_SEED", "WHEAT", 3])
+
 
     # WHEAT売却
-    if wheat_in_shed > 0:
-        market.append(
-            ["SELL", "WHEAT", wheat_in_shed]
-        )
+    if goose_count > 0:
+        if wheat_in_shed < 2:
+            market.append(["BUY_PRODUCT", "WHEAT", 2 - wheat_in_shed,])
+        
+        wheat_to_sell = max(wheat_in_shed - 2, 0,)
+
+        if wheat_to_sell > 0:
+            market.append(["SELL", "WHEAT", wheat_to_sell,])
+
+    elif wheat_in_shed > 0:
+        market.append(["SELL", "WHEAT", wheat_in_shed])
+
+
+
+
 
     # MELON売却
     if melon_in_shed > 0:
@@ -324,28 +331,22 @@ def build_market_actions(
             day,
             step,
         ):
-            market.append(
-                ["SELL", "MELON", melon_in_shed]
-            )
+            market.append(["SELL", "MELON", melon_in_shed])
 
     # 雇用
     total_people = 1 + len(current_hands)
 
     if total_people < 5 and money >= 200:
-        market.append(
-            ["HIRE"]
-        )
+        market.append(["HIRE"])
+
     if total_people < 10 and money >= 5000:
-        market.append(
-            ["HIRE"]
-        )
+        market.append(["HIRE"])
+
 
     # 土地購入
     if len(unlocked_quads) < 2 and money >= 5000:
-        market.insert(
-            0,
-            ["BUY_LAND"],
-        )
+        market.insert(0,["BUY_LAND"],)
+
 
     #gooseを飼う
     goose_in_shed = shed.get("GOOSE", 0)
@@ -355,9 +356,8 @@ def build_market_actions(
         and goose_count == 0
         and money >= 300
     ):
-        market.append(
-            ["BUY_ANIMAL", "GOOSE", 1]
-        )
+        market.append(["BUY_ANIMAL", "GOOSE", 1])
+
 
     return market
 
@@ -385,11 +385,13 @@ def agent(obs, config):
 
     current_hands = me.get("hands", [])
 
-    melon_price = get_market_price(obs, "MELON",)#メロン価格
-    melon_stock = obs["market"]["inventory"]["MELON"]#メロン市場在庫
+    melon_price = get_market_price(obs, "MELON",)
+    melon_stock = obs["market"]["inventory"]["MELON"]
 
-    wheat_seeds = seeds.get("WHEAT", 0)#小麦在庫
-    melon_seeds = seeds.get("MELON", 0)#メロン在庫
+    wheat_seeds = seeds.get("WHEAT", 0)
+    melon_seeds = seeds.get("MELON", 0)
+
+    wheat_in_shed = shed.get("WHEAT", 0)
 
     has_seeds = (wheat_seeds > 0 or melon_seeds > 0)
 
@@ -402,8 +404,10 @@ def agent(obs, config):
     )
     farmer_goose = famer_inventory.get("GOOSE", 0)
 
+    farmer_wheat = famer_inventory.get("WHEAT", 0)
+
     coop_count = 0
-    
+
     for row in tiles:
         for tile in row:
             if isinstance(tile, dict) and tile.get("kind") == "COOP":
@@ -445,16 +449,10 @@ def agent(obs, config):
             and farmer_tile.get("kind") == "COOP"
             and not farmer_tile.get("animal")
         ):
-            farmer_action = [
-                "PLACE",
-                "GOOSE"
-            ]
+            farmer_action = ["PLACE","GOOSE"]
+
         else:
-            coop_target = find_empty_coop(
-                tiles,
-                fx,
-                fy
-            )
+            coop_target = find_empty_coop(tiles, fx, fy)
 
             if coop_target is not None:
                 move_dir = step_toward(
@@ -465,44 +463,37 @@ def agent(obs, config):
                     tiles,
                 )
 
-                farmer_action = [
-                    move_dir
-                ]
+                farmer_action = [move_dir]
 
     elif(
         goose_in_shed > 0
         and coop_count > 0
         and hour == 0
     ):
-        farmer_action = [
-            "PICKUP",
-            "GOOSE",
-            1,
-        ]    
+        farmer_action = ["PICKUP", "GOOSE", 1,]
+
+    elif(
+        goose_count > 0
+        and farmer_wheat == 0
+        and wheat_in_shed > 0
+        and hour == 0
+    ):
+        farmer_action = ["PICKUP", "WHEAT", 1,]
+    
 
     elif farmer_tile is None:
         if goose_in_shed > 0 and coop_count < 1:
-            farmer_action = [
-                "BUILD_COOP",
-            ]
+            farmer_action = ["BUILD_COOP",]
 
         elif melon_seeds > 0:
-            farmer_action = [
-                "PLANT",
-                "MELON",
-            ]
+            farmer_action = ["PLANT", "MELON",]
+
         elif wheat_seeds > 0:
-            farmer_action = [
-                "PLANT",
-                "WHEAT",
-            ]
+            farmer_action = ["PLANT", "WHEAT",]
 
 
     else:
-        farmer_action = get_tile_action(
-            farmer_tile,
-            day,
-        )
+        farmer_action = get_tile_action(farmer_tile, day,)
 
     # メイン農家の移動
 
@@ -563,22 +554,16 @@ def agent(obs, config):
 
         elif hand_tile is None:
             if melon_seeds > 0:
-                hand_action = [
-                    "PLANT",
-                    "MELON",
-                ]
+                hand_action = ["PLANT", "MELON",]
+
             elif wheat_seeds > 0:
-                hand_action = [
-                    "PLANT",
-                    "WHEAT",
-                ]
+                hand_action = ["PLANT", "WHEAT",]
+
             else:
                 hand_action = None
         else:
-            hand_action = get_tile_action(
-                hand_tile,
-                day,
-            )
+            hand_action = get_tile_action(hand_tile, day,)
+
         if hand_action is None:
             target = find_target_tile(
                 tiles,
