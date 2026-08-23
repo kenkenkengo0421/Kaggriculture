@@ -186,7 +186,7 @@ def find_fertilize_target(
     tiles,
     fx,
     fy,
-    day,     
+    day,
 ):
     """現在位置から最も近い肥料対象の植物を返す"""
 
@@ -195,7 +195,7 @@ def find_fertilize_target(
 
     for y in range(len(tiles)):
         for x in range(len(tiles[0])):
-        
+
             tile = tiles[y][x]
 
             if(
@@ -208,7 +208,7 @@ def find_fertilize_target(
                 if distance < best_distance:
                     best_distance = distance
                     best_target = (x, y)
-    
+
     return best_target
 
 def find_target_tile(
@@ -326,7 +326,7 @@ def build_market_actions(
     egg_in_shed = shed.get("EGG", 0)
 
     # 種を購入
-    if money >= 500:
+    if day < 8 and money >= 500:
         if melon_seeds == 0:
             market.append(["BUY_SEED", "MELON", 10])
 
@@ -368,9 +368,6 @@ def build_market_actions(
     total_people = 1 + len(current_hands)
 
     if total_people < 5 and money >= 200:
-        market.append(["HIRE"])
-
-    if total_people < 10 and money >= 5000:
         market.append(["HIRE"])
 
 
@@ -421,6 +418,11 @@ def agent(obs, config):
 
     wheat_seeds = seeds.get("WHEAT", 0)
     melon_seeds = seeds.get("MELON", 0)
+
+    remaining_wheat_seeds = wheat_seeds
+    remaining_melon_seeds = melon_seeds
+
+    melon_plant_allowed = day < 8
 
     wheat_in_shed = shed.get("WHEAT", 0)
 
@@ -484,8 +486,8 @@ def agent(obs, config):
         else:
             move_dir = step_toward(fx, fy, 4, 4, tiles)
             farmer_action = [move_dir]
-        
-        
+
+
 
     elif farmer_goose > 0:
         if (
@@ -529,12 +531,13 @@ def agent(obs, config):
         if goose_in_shed > 0 and coop_count < 1:
             farmer_action = ["BUILD_COOP",]
 
-        elif melon_seeds > 0:
+        elif melon_plant_allowed and remaining_melon_seeds > 0:
             farmer_action = ["PLANT", "MELON",]
+            remaining_melon_seeds -= 1
 
-        elif wheat_seeds > 0:
+        elif remaining_wheat_seeds > 0:
             farmer_action = ["PLANT", "WHEAT",]
-
+            remaining_wheat_seeds -= 1  
 
     else:
         farmer_action = get_tile_action(farmer_tile, day,)
@@ -550,7 +553,7 @@ def agent(obs, config):
             and farmer_tile.get("fertilized_until_day", -1,) < day
         ):
             farmer_action = ["FERTILIZE"]
-        
+
         else:
             fertilizer_target = find_fertilize_target(tiles, fx, fy, day)
 
@@ -565,11 +568,16 @@ def agent(obs, config):
                 farmer_action = [move_dir]
 
     if farmer_action is None:
+
+        remaining_has_seeds = (
+            remaining_wheat_seeds > 0 or (melon_plant_allowed and remaining_melon_seeds > 0)
+        )
+
         target = find_target_tile(
             tiles,
             fx,
             fy,
-            has_seeds,
+            remaining_has_seeds,
             day,
             claimed_targets,
         )
@@ -617,12 +625,14 @@ def agent(obs, config):
         ):
             hand_action = None
 
-        elif hand_tile is None:
-            if melon_seeds > 0:
+        elif hand_tile is None:           
+            if melon_plant_allowed and remaining_melon_seeds > 0:
                 hand_action = ["PLANT", "MELON",]
+                remaining_melon_seeds -= 1
 
-            elif wheat_seeds > 0:
+            elif remaining_wheat_seeds > 0:
                 hand_action = ["PLANT", "WHEAT",]
+                remaining_wheat_seeds -= 1
 
             else:
                 hand_action = None
@@ -630,11 +640,13 @@ def agent(obs, config):
             hand_action = get_tile_action(hand_tile, day,)
 
         if hand_action is None:
+            remaining_has_seeds = (remaining_wheat_seeds > 0 or (melon_plant_allowed and remaining_melon_seeds > 0))
+
             target = find_target_tile(
                 tiles,
                 hx,
                 hy,
-                has_seeds,
+                remaining_has_seeds,
                 day,
                 claimed_targets,
             )
