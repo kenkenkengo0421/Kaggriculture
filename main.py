@@ -182,6 +182,34 @@ def find_empty_coop(
 
     return best_target
 
+def find_fertilize_target(
+    tiles,
+    fx,
+    fy,
+    day,     
+):
+    """現在位置から最も近い肥料対象の植物を返す"""
+
+    best_target = None
+    best_distance = 9999
+
+    for y in range(len(tiles)):
+        for x in range(len(tiles[0])):
+        
+            tile = tiles[y][x]
+
+            if(
+                isinstance(tile, dict)
+                and tile.get("kind") == "PLANT"
+                and tile.get("fertilized_until_day", -1) < day
+            ):
+                distance = abs(x - fx) + abs(y - fy)
+
+                if distance < best_distance:
+                    best_distance = distance
+                    best_target = (x, y)
+    
+    return best_target
 
 def find_target_tile(
     tiles,
@@ -295,6 +323,7 @@ def build_market_actions(
 
     wheat_in_shed = shed.get("WHEAT", 0)
     melon_in_shed = shed.get("MELON", 0)
+    egg_in_shed = shed.get("EGG", 0)
 
     # 種を購入
     if money >= 500:
@@ -309,7 +338,7 @@ def build_market_actions(
     if goose_count > 0:
         if wheat_in_shed < 2:
             market.append(["BUY_PRODUCT", "WHEAT", 2 - wheat_in_shed,])
-        
+
         wheat_to_sell = max(wheat_in_shed - 2, 0,)
 
         if wheat_to_sell > 0:
@@ -318,7 +347,9 @@ def build_market_actions(
     elif wheat_in_shed > 0:
         market.append(["SELL", "WHEAT", wheat_in_shed])
 
-
+    #EGG売却
+    if egg_in_shed > 0:
+        market.append(["SELL", "EGG", egg_in_shed])
 
 
 
@@ -405,6 +436,8 @@ def agent(obs, config):
     farmer_goose = famer_inventory.get("GOOSE", 0)
 
     farmer_wheat = famer_inventory.get("WHEAT", 0)
+    farmer_fertilizer = famer_inventory.get("FERTILIZER", 0)
+
 
     coop_count = 0
 
@@ -423,6 +456,7 @@ def agent(obs, config):
                 goose_count += 1
     goose_count += shed.get("GOOSE", 0)
     goose_count += farmer_goose
+
 
 
     # 市場
@@ -479,7 +513,7 @@ def agent(obs, config):
         and hour == 0
     ):
         farmer_action = ["PICKUP", "WHEAT", 1,]
-    
+
 
     elif farmer_tile is None:
         if goose_in_shed > 0 and coop_count < 1:
@@ -498,6 +532,27 @@ def agent(obs, config):
     # メイン農家の移動
 
     claimed_targets = set()
+
+    if(farmer_action is None and farmer_fertilizer > 0):
+        if(
+            isinstance(farmer_tile, dict)
+            and farmer_tile.get("kind") == "PLANT"
+            and farmer_tile.get("fertilized_until_day", -1,) < day
+        ):
+            farmer_action = ["FERTILIZE"]
+        
+        else:
+            fertilizer_target = find_fertilize_target(tiles, fx, fy, day)
+
+            if fertilizer_target is not None:
+                move_dir = step_toward(
+                    fx, fy,
+                    fertilizer_target[0],
+                    fertilizer_target[1],
+                    tiles,
+                )
+
+                farmer_action = [move_dir]
 
     if farmer_action is None:
         target = find_target_tile(
