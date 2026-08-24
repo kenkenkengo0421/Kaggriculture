@@ -368,7 +368,7 @@ def build_market_actions(
     # 雇用
     total_people = 1 + len(current_hands)
 
-    if total_people < 5 and money >= 200:
+    if total_people < 5:
         market.append(["HIRE"])
 
 
@@ -538,7 +538,7 @@ def agent(obs, config):
 
         elif remaining_wheat_seeds > 0:
             farmer_action = ["PLANT", "WHEAT",]
-            remaining_wheat_seeds -= 1  
+            remaining_wheat_seeds -= 1
 
     else:
         farmer_action = get_tile_action(farmer_tile, day,)
@@ -626,7 +626,7 @@ def agent(obs, config):
         ):
             hand_action = None
 
-        elif hand_tile is None:           
+        elif hand_tile is None:
             if melon_plant_allowed and remaining_melon_seeds > 0:
                 hand_action = ["PLANT", "MELON",]
                 remaining_melon_seeds -= 1
