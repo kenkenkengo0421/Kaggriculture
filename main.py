@@ -155,13 +155,12 @@ def step_toward(fx, fy, tx, ty, tiles):
 
     return "PASS"
 
-def find_empty_coop(
+def find_empty_pasture(
     tiles,
     fx,
     fy,
 ):
-    """現在位置から最も近い空のcoopを返す"""
-
+    """現在位置から最も近い空のpastureを返す"""
     best_target = None
     best_distance = 9999
 
@@ -170,17 +169,17 @@ def find_empty_coop(
 
             tile = tiles[y][x]
 
-            if(
+            if (
                 isinstance(tile, dict)
-                and tile.get("kind") == "COOP"
-                and  not tile.get("animal")
+                and tile.get("kind") == "PASTURE"
+                and not tile.get("animal")
             ):
                 distance = (abs(x - fx) + abs(y - fy))
 
                 if distance < best_distance:
                     best_distance = distance
                     best_target = (x, y)
-
+    
     return best_target
 
 def find_fertilize_target(
@@ -306,7 +305,7 @@ def build_market_actions(
     step,
     melon_price,
     melon_stock,
-    goose_count,
+    cow_count,
 ):
     """現在の市場売買・雇用・土地購入ルールから注文一覧を作る。"""
 
@@ -324,7 +323,8 @@ def build_market_actions(
 
     wheat_in_shed = shed.get("WHEAT", 0)
     melon_in_shed = shed.get("MELON", 0)
-    egg_in_shed = shed.get("EGG", 0)
+
+    milk_in_shed = shed.get("MILK", 0)
 
     # 種を購入
     if day < 8 and money >= 500:
@@ -336,7 +336,7 @@ def build_market_actions(
 
 
     # WHEAT売却
-    if goose_count > 0:
+    if cow_count > 0:
         if wheat_in_shed < 2:
             market.append(["BUY_PRODUCT", "WHEAT", 2 - wheat_in_shed,])
 
@@ -348,9 +348,9 @@ def build_market_actions(
     elif wheat_in_shed > 0:
         market.append(["SELL", "WHEAT", wheat_in_shed])
 
-    #EGG売却
-    if egg_in_shed > 0:
-        market.append(["SELL", "EGG", egg_in_shed])
+    #MILK売却
+    if milk_in_shed > 0:
+        market.append(["SELL", "MILK", milk_in_shed])
 
 
 
@@ -377,15 +377,15 @@ def build_market_actions(
         market.insert(0,["BUY_LAND"],)
 
 
-    #gooseを飼う
-    goose_in_shed = shed.get("GOOSE", 0)
+    #cowを飼う
+    cow_in_shed = shed.get("COW", 0)
 
     if(
         len(unlocked_quads) >= 1
-        and goose_count == 0
-        and money >= 300
+        and cow_count == 0
+        and money >= 400
     ):
-        market.append(["BUY_ANIMAL", "GOOSE", 1])
+        market.append(["BUY_ANIMAL", "COW", 1])
 
 
     return market
@@ -436,29 +436,30 @@ def agent(obs, config):
         if len(inventories) > 0
         else {}
     )
-    farmer_goose = famer_inventory.get("GOOSE", 0)
+    farmer_cow = famer_inventory.get("COW", 0)
 
     farmer_wheat = famer_inventory.get("WHEAT", 0)
     farmer_fertilizer = famer_inventory.get("FERTILIZER", 0)
-    farmer_egg = famer_inventory.get("EGG", 0)
 
-    coop_count = 0
+    farmer_milk = famer_inventory.get("MILK", 0)
+
+    pasture_count = 0
 
     for row in tiles:
         for tile in row:
-            if isinstance(tile, dict) and tile.get("kind") == "COOP":
-                coop_count += 1
+            if isinstance(tile, dict) and tile.get("kind") == "PASTURE":
+                pasture_count += 1
 
-    goose_count = 0
+    cow_count = 0
 
     for row in tiles:
         for tile in row:
             if (
-                isinstance(tile, dict) and tile.get("animal") == "GOOSE"
+                isinstance(tile, dict) and tile.get("animal") == "COW"
             ):
-                goose_count += 1
-    goose_count += shed.get("GOOSE", 0)
-    goose_count += farmer_goose
+                cow_count += 1
+    cow_count += shed.get("COW", 0)
+    cow_count += farmer_cow
 
 
 
@@ -472,17 +473,17 @@ def agent(obs, config):
         step,
         melon_price,
         melon_stock,
-        goose_count,
+        cow_count,
     )
 
     # メイン農家
 
     farmer_action = None
-    goose_in_shed = shed.get("GOOSE", 0)
+    cow_in_shed = shed.get("COW", 0)
 
-    if step >= 710 and farmer_egg > 0:
+    if step >= 710 and farmer_milk > 0:
         if (fx, fy) == (4, 4):
-            farmer_action = ["PLACE", "EGG", farmer_egg,]
+            farmer_action = ["PLACE", "MILK", farmer_milk,]
 
         else:
             move_dir = step_toward(fx, fy, 4, 4, tiles)
@@ -490,37 +491,37 @@ def agent(obs, config):
 
 
 
-    elif farmer_goose > 0:
+    elif farmer_cow > 0:
         if (
             isinstance(farmer_tile, dict)
-            and farmer_tile.get("kind") == "COOP"
+            and farmer_tile.get("kind") == "PASTURE"
             and not farmer_tile.get("animal")
         ):
-            farmer_action = ["PLACE","GOOSE"]
+            farmer_action = ["PLACE","COW"]
 
         else:
-            coop_target = find_empty_coop(tiles, fx, fy)
+            pasture_target = find_empty_pasture(tiles, fx, fy)
 
-            if coop_target is not None:
+            if pasture_target is not None:
                 move_dir = step_toward(
                     fx,
                     fy,
-                    coop_target[0],
-                    coop_target[1],
+                    pasture_target[0],
+                    pasture_target[1],
                     tiles,
                 )
 
                 farmer_action = [move_dir]
 
     elif(
-        goose_in_shed > 0
-        and coop_count > 0
+        cow_in_shed > 0
+        and pasture_count > 0
         and hour == 0
     ):
-        farmer_action = ["PICKUP", "GOOSE", 1,]
+        farmer_action = ["PICKUP", "COW", 1,]
 
     elif(
-        goose_count > 0
+        cow_count > 0
         and farmer_wheat == 0
         and wheat_in_shed > 0
         and hour == 0
@@ -529,8 +530,8 @@ def agent(obs, config):
 
 
     elif farmer_tile is None:
-        if goose_in_shed > 0 and coop_count < 1:
-            farmer_action = ["BUILD_COOP",]
+        if cow_in_shed > 0 and pasture_count < 1:
+            farmer_action = ["BUILD_PASTURE",]
 
         elif melon_plant_allowed and remaining_melon_seeds > 0:
             farmer_action = ["PLANT", "MELON",]
