@@ -232,7 +232,7 @@ def find_cow_target(tiles, fx, fy, day):
                 if distance < best_distance:
                     best_distance = distance
                     best_target = (x, y)
-    
+
     return best_target
 
 def find_target_tile(
@@ -356,7 +356,7 @@ def build_market_actions(
             market.append(["BUY_SEED", "MELON", 10])
 
     if wheat_seeds == 0 and money >= 10:
-        market.append(["BUY_SEED", "WHEAT", 3])
+        market.append(["BUY_SEED", "WHEAT", 6])
 
 
     # WHEAT売却
@@ -392,12 +392,12 @@ def build_market_actions(
     # 雇用
     total_people = 1 + len(current_hands)
 
-    if total_people < 5:
+    if total_people < 7:
         market.append(["HIRE"])
 
 
     # 土地購入
-    if len(unlocked_quads) < 2 and money >= 5000:
+    if len(unlocked_quads) < 3 and money >= 5000:
         market.insert(0,["BUY_LAND"],)
 
 
@@ -406,7 +406,7 @@ def build_market_actions(
 
     if(
         len(unlocked_quads) >= 1
-        and cow_count < 2
+        and cow_count < 4
         and money >= 400
     ):
         market.append(["BUY_ANIMAL", "COW", 1])
@@ -554,7 +554,7 @@ def agent(obs, config):
 
 
     elif farmer_tile is None:
-        if cow_in_shed > 0 and pasture_count < 2:
+        if cow_in_shed > 0 and pasture_count < 4:
             farmer_action = ["BUILD_PASTURE",]
 
         elif melon_plant_allowed and remaining_melon_seeds > 0:
@@ -626,7 +626,7 @@ def agent(obs, config):
 
 
     # 作業員
- 
+
     hands_actions = []
 
     for hand_index, hand in enumerate(current_hands):
