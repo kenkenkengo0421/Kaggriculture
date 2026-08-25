@@ -690,7 +690,7 @@ def agent(obs, config):
                         hand_action = [move_dir]
 
                     else:
-                        hand_action = ["PASS"]
+                        hand_action = None
 
 
             else:
@@ -712,7 +712,73 @@ def agent(obs, config):
                     hand_action = [move_dir]
 
                 else:
+                    hand_action = None
+
+            if hand_action is None:
+                cow_coords = set()
+
+            if hand_action is None:
+                if hand_tile is None:
+                    if melon_plant_allowed and remaining_melon_seeds > 0:
+                        hand_action = ["PLANT", "MELON",]
+                        remaining_melon_seeds -= 1
+
+                    elif remaining_wheat_seeds > 0:
+                        hand_action = ["PLANT", "WHEAT",]
+                        remaining_wheat_seeds -= 1
+
+                elif not(
+                    isinstance(hand_tile, dict)
+                    and hand_tile.get("animal")
+                ):
+                    hand_action = get_tile_action(hand_tile, day,)
+
+            if hand_action is None:
+                cow_coords = set()
+
+                for y in range(len(tiles)):
+                    for x in range(len(tiles[0])):
+                        tile = tiles[y][x]
+
+                        if(
+                            isinstance(tile, dict)
+                            and tile.get("animal") == "COW"
+                        ):
+                            cow_coords.add((x, y))
+
+                remaining_has_seeds = (
+                    remaining_wheat_seeds > 0
+                    or (
+                        melon_plant_allowed
+                        and remaining_melon_seeds > 0
+                    )
+                )
+
+                target = find_target_tile(
+                    tiles,
+                    hx,
+                    hy,
+                    remaining_has_seeds,
+                    day,
+                    claimed_targets | cow_coords,
+                )
+
+                if target is not None:
+                    claimed_targets.add(target)
+
+                    move_dir = step_toward(
+                        hx,
+                        hy,
+                        target[0],
+                        target[1],
+                        tiles,
+                    )
+
+                    hand_action = [move_dir]
+
+                else:
                     hand_action = ["PASS"]
+
 
         else:
 
@@ -739,7 +805,6 @@ def agent(obs, config):
                     hand_tile,
                     day,
                 )
-
 
             if hand_action is None:
                 cow_coords = set()
