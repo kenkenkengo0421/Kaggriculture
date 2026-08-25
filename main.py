@@ -179,7 +179,7 @@ def find_empty_pasture(
                 if distance < best_distance:
                     best_distance = distance
                     best_target = (x, y)
-    
+
     return best_target
 
 def find_fertilize_target(
@@ -209,6 +209,30 @@ def find_fertilize_target(
                     best_distance = distance
                     best_target = (x, y)
 
+    return best_target
+
+def find_cow_target(tiles, fx, fy, day):
+    """現在位置から最も近い作業対象のCOWを返す"""
+
+    best_target = None
+    best_distance = 9999
+
+    for y in range(len(tiles)):
+        for x in range(len(tiles[0])):
+
+            tile = tiles[y][x]
+
+            if(
+                isinstance(tile, dict)
+                and tile.get("animal") == "COW"
+                and get_tile_action(tile, day)is not None
+            ):
+                distance = abs(x - fx) + abs(y - fy)
+
+                if distance < best_distance:
+                    best_distance = distance
+                    best_target = (x, y)
+    
     return best_target
 
 def find_target_tile(
@@ -382,7 +406,7 @@ def build_market_actions(
 
     if(
         len(unlocked_quads) >= 1
-        and cow_count == 0
+        and cow_count < 2
         and money >= 400
     ):
         market.append(["BUY_ANIMAL", "COW", 1])
@@ -515,7 +539,7 @@ def agent(obs, config):
 
     elif(
         cow_in_shed > 0
-        and pasture_count > 0
+        and find_empty_pasture(tiles, fx, fy) is not None
         and hour == 0
     ):
         farmer_action = ["PICKUP", "COW", 1,]
@@ -530,7 +554,7 @@ def agent(obs, config):
 
 
     elif farmer_tile is None:
-        if cow_in_shed > 0 and pasture_count < 1:
+        if cow_in_shed > 0 and pasture_count < 2:
             farmer_action = ["BUILD_PASTURE",]
 
         elif melon_plant_allowed and remaining_melon_seeds > 0:
@@ -600,77 +624,179 @@ def agent(obs, config):
             (fx, fy)
         )
 
-    for y in range(len(tiles)):
-        for x in range(len(tiles[0])):
-            tile = tiles[y][x]
-
-            if(
-                isinstance(tile, dict)
-                and tile.get("animal")
-            ):
-                claimed_targets.add(
-                    (x, y)
-                )
 
     # 作業員
-
+ 
     hands_actions = []
 
-    for hand in current_hands:
+    for hand_index, hand in enumerate(current_hands):
         hx, hy = hand
+
+        hand_inventory = (
+            inventories[hand_index + 1]
+            if len(inventories) > hand_index + 1
+            else {}
+        )
+
+        hand_wheat = hand_inventory.get("WHEAT", 0)
 
         hand_tile = tiles[hy][hx]
 
-        if(
-            isinstance(hand_tile, dict)
-            and hand_tile.get("animal")
-        ):
-            hand_action = None
+        if hand_index == 0:
 
-        elif hand_tile is None:
-            if melon_plant_allowed and remaining_melon_seeds > 0:
-                hand_action = ["PLANT", "MELON",]
-                remaining_melon_seeds -= 1
+            if(
+                cow_count > 0
+                and hand_wheat == 0
+                and wheat_in_shed > 0
+            ):
+                if (hx, hy) == (4, 4):
+                    hand_action = ["PICKUP", "WHEAT", 1,]
 
-            elif remaining_wheat_seeds > 0:
-                hand_action = ["PLANT", "WHEAT",]
-                remaining_wheat_seeds -= 1
+                else:
+                    move_dir = step_toward(
+                        hx,
+                        hy,
+                        4,
+                        4,
+                        tiles,
+                    )
+                    hand_action = [move_dir]
+
+            elif(
+                isinstance(hand_tile, dict)
+                and hand_tile.get("animal") == "COW"
+            ):
+                hand_action = get_tile_action(
+                    hand_tile,
+                    day,
+                )
+
+                if hand_action is None:
+                    cow_target = find_cow_target(
+                        tiles,
+                        hx,
+                        hy,
+                        day,
+                    )
+
+                    if cow_target is not None:
+                        move_dir = step_toward(
+                            hx,
+                            hy,
+                            cow_target[0],
+                            cow_target[1],
+                            tiles,
+                        )
+                        hand_action = [move_dir]
+
+                    else:
+                        hand_action = ["PASS"]
+
 
             else:
-                hand_action = None
-        else:
-            hand_action = get_tile_action(hand_tile, day,)
-
-        if hand_action is None:
-            remaining_has_seeds = (remaining_wheat_seeds > 0 or (melon_plant_allowed and remaining_melon_seeds > 0))
-
-            target = find_target_tile(
-                tiles,
-                hx,
-                hy,
-                remaining_has_seeds,
-                day,
-                claimed_targets,
-            )
-            if target is not None:
-                claimed_targets.add(target)
-                move_dir = step_toward(
+                cow_target = find_cow_target(
+                    tiles,
                     hx,
                     hy,
-                    target[0],
-                    target[1],
-                    tiles,
+                    day,
                 )
-                hand_action = [move_dir]
-            else:
-                hand_action = ["PASS"]
+
+                if cow_target is not None:
+                    move_dir = step_toward(
+                        hx,
+                        hy,
+                        cow_target[0],
+                        cow_target[1],
+                        tiles,
+                    )
+                    hand_action = [move_dir]
+
+                else:
+                    hand_action = ["PASS"]
+
         else:
+
+            if hand_tile is None:
+                if melon_plant_allowed and remaining_melon_seeds > 0:
+                    hand_action = ["PLANT", "MELON",]
+                    remaining_melon_seeds -= 1
+
+                elif remaining_wheat_seeds > 0:
+                    hand_action = ["PLANT", "WHEAT",]
+                    remaining_wheat_seeds -= 1
+
+                else:
+                    hand_action = None
+
+            elif(
+                isinstance(hand_tile, dict)
+                and hand_tile.get("animal")
+            ):
+                hand_action = None
+
+            else:
+                hand_action = get_tile_action(
+                    hand_tile,
+                    day,
+                )
+
+
+            if hand_action is None:
+                cow_coords = set()
+
+                for y in range(len(tiles)):
+                    for x in range(len(tiles[0])):
+                        tile = tiles[y][x]
+
+                        if(
+                            isinstance(tile, dict)
+                            and tile.get("animal") == "COW"
+                        ):
+                            cow_coords.add((x, y))
+
+                remaining_has_seeds = (
+                    remaining_wheat_seeds > 0
+                    or (
+                        melon_plant_allowed
+                        and remaining_melon_seeds > 0
+                    )
+                )
+
+                target = find_target_tile(
+                    tiles,
+                    hx,
+                    hy,
+                    remaining_has_seeds,
+                    day,
+                    claimed_targets | cow_coords,
+                )
+
+                if target is not None:
+                    claimed_targets.add(target)
+
+                    move_dir = step_toward(
+                        hx,
+                        hy,
+                        target[0],
+                        target[1],
+                        tiles,
+                    )
+
+                    hand_action = [move_dir]
+
+                else:
+                    hand_action = ["PASS"]
+
+
+        if hand_action is not None:
             claimed_targets.add(
                 (hx, hy)
             )
+
         hands_actions.append(
             hand_action
         )
+
 
     # 出力
 
