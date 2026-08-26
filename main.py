@@ -373,7 +373,7 @@ def build_market_actions(
         market.append(["SELL", "WHEAT", wheat_in_shed])
 
     #MILK売却
-    if step >= 600 and milk_in_shed > 0:
+    if milk_in_shed > 0:
         market.append(["SELL", "MILK", milk_in_shed])
 
 
