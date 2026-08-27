@@ -351,9 +351,28 @@ def build_market_actions(
     milk_in_shed = shed.get("MILK", 0)
 
     # 種を購入
-    if day < 8 and money >= 500:
-        if melon_seeds == 0:
-            market.append(["BUY_SEED", "MELON", 10])
+    melon_planted_count = 0
+
+    for row in me["tiles"]:
+        for tile in row:
+            if(
+                isinstance(tile, dict)
+                and tile.get("kind") == "PLANT"
+                and tile.get("crop") == "MELON"
+            ):
+                melon_planted_count += 1
+
+    melon_total = melon_seeds + melon_planted_count
+    melon_to_buy = max(10 - melon_total, 0)
+
+    if(
+        day < 8
+        and melon_to_buy > 0
+        and money >= melon_to_buy * 80
+    ):
+        market.append(
+            ["BUY_SEED", "MELON", melon_to_buy]
+        )
 
     if wheat_seeds == 0 and money >= 10:
         market.append(["BUY_SEED", "WHEAT", 6])
