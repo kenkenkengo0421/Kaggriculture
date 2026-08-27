@@ -2,6 +2,9 @@
 import random
 
 
+hire_control_states = {}
+
+
 def get_market_price(obs, product):
     """現在価格を取得する。"""
     return obs["market"]["prices"][product]
@@ -155,6 +158,7 @@ def step_toward(fx, fy, tx, ty, tiles):
 
     return "PASS"
 
+
 def find_empty_pasture(
     tiles,
     fx,
@@ -181,6 +185,7 @@ def find_empty_pasture(
                     best_target = (x, y)
 
     return best_target
+
 
 def find_fertilize_target(
     tiles,
@@ -211,6 +216,7 @@ def find_fertilize_target(
 
     return best_target
 
+
 def find_cow_target(tiles, fx, fy, day):
     """現在位置から最も近い作業対象のCOWを返す"""
 
@@ -234,6 +240,7 @@ def find_cow_target(tiles, fx, fy, day):
                     best_target = (x, y)
 
     return best_target
+
 
 def find_target_tile(
     tiles,
@@ -285,7 +292,6 @@ def find_target_tile(
                 elif tile.get("fertilizer_available", 0) > 0:
                     base_score = 55
 
-
             # 植物
             elif isinstance(tile, dict) and tile.get("kind") == "PLANT":
                 crop_name = tile.get("crop", "WHEAT")
@@ -320,6 +326,71 @@ def find_target_tile(
 
     return best_target
 
+def update_hire_control(
+    player,
+    day,
+    step,
+):
+    """前日の作業員PASS率から目標作業員数を更新する。"""
+
+    if (
+        step == 0
+        or player not in hire_control_states
+    ):
+        hire_control_states[player] = {
+            "day": day,
+            "pass_count": 0,
+            "action_count": 0,
+            "target_hands": 6,
+        }
+
+        return hire_control_states[player]
+
+    state = hire_control_states[player]
+
+    if day != state["day"]:
+
+        if state["action_count"] > 0:
+            pass_rate = (
+                state["pass_count"]
+                / state["action_count"]
+            )
+
+            # PASS率15%以上なら1人減らす
+            if pass_rate >= 0.15:
+                state["target_hands"] = max(
+                    0,
+                    state["target_hands"] - 1,
+                )
+
+            # PASS率5%以下なら1人増やす
+            elif pass_rate <= 0.05:
+                state["target_hands"] = min(
+                    6,
+                    state["target_hands"] + 1,
+                )
+
+        state["day"] = day
+        state["pass_count"] = 0
+        state["action_count"] = 0
+
+    return state
+
+
+def record_hands_actions(
+    player,
+    hands_actions,
+):
+    """現在ターンの作業員PASS数を記録する。"""
+
+    state = hire_control_states[player]
+
+    for hand_action in hands_actions:
+
+        state["action_count"] += 1
+
+        if hand_action == ["PASS"]:
+            state["pass_count"] += 1
 
 def build_market_actions(
     me,
@@ -330,6 +401,7 @@ def build_market_actions(
     melon_price,
     melon_stock,
     cow_count,
+    target_hands,  # ★変更
 ):
     """現在の市場売買・雇用・土地購入ルールから注文一覧を作る。"""
 
@@ -408,10 +480,9 @@ def build_market_actions(
         ):
             market.append(["SELL", "MELON", melon_in_shed])
 
-    # 雇用
-    total_people = 1 + len(current_hands)
+    #目標作業員数までHIRE
 
-    if total_people < 7:
+    if len(current_hands) < target_hands:
         market.append(["HIRE"])
 
 
@@ -504,7 +575,13 @@ def agent(obs, config):
     cow_count += shed.get("COW", 0)
     cow_count += farmer_cow
 
+    hire_state = update_hire_control(
+        player,
+        day,
+        step,
+    )
 
+    target_hands = hire_state["target_hands"]
 
     # 市場
 
@@ -517,6 +594,7 @@ def agent(obs, config):
         melon_price,
         melon_stock,
         cow_count,
+        target_hands,  # ★変更
     )
 
     # メイン農家
@@ -880,6 +958,11 @@ def agent(obs, config):
         hands_actions.append(
             hand_action
         )
+
+    record_hands_actions(
+        player,
+        hands_actions,
+    )
 
 
     # 出力
