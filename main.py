@@ -69,6 +69,17 @@ def should_sell_melon(
 
     return False
 
+def should_sell_milk(milk_price, step,):
+    """MILKをSELLするかHOLDするか判断する"""
+    
+    if step >= 710:
+        return True
+    
+    if milk_price >= 160:
+        return True
+    
+    return False
+
 
 def get_harvest_age(crop_name):
     """現在の戦略で使う収穫開始日を返す。"""
@@ -401,7 +412,8 @@ def build_market_actions(
     melon_price,
     melon_stock,
     cow_count,
-    target_hands,  # ★変更
+    target_hands,
+    milk_price,
 ):
     """現在の市場売買・雇用・土地購入ルールから注文一覧を作る。"""
 
@@ -465,9 +477,8 @@ def build_market_actions(
 
     #MILK売却
     if milk_in_shed > 0:
-        market.append(["SELL", "MILK", milk_in_shed])
-
-
+        if should_sell_milk(milk_price, step):
+            market.append(["SELL", "MILK", milk_in_shed])
 
     # MELON売却
     if melon_in_shed > 0:
@@ -527,6 +538,8 @@ def agent(obs, config):
     hour = obs.get("hour", 0)
 
     current_hands = me.get("hands", [])
+
+    milk_price = get_market_price(obs, "MILK",)
 
     melon_price = get_market_price(obs, "MELON",)
     melon_stock = obs["market"]["inventory"]["MELON"]
@@ -594,7 +607,8 @@ def agent(obs, config):
         melon_price,
         melon_stock,
         cow_count,
-        target_hands,  # ★変更
+        target_hands,
+        milk_price,
     )
 
     # メイン農家
