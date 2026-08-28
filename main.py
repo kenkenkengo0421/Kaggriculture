@@ -71,13 +71,13 @@ def should_sell_melon(
 
 def should_sell_milk(milk_price, step,):
     """MILKをSELLするかHOLDするか判断する"""
-    
+
     if step >= 710:
         return True
-    
+
     if milk_price >= 160:
         return True
-    
+
     return False
 
 
@@ -85,6 +85,10 @@ def get_harvest_age(crop_name):
     """現在の戦略で使う収穫開始日を返す。"""
     if crop_name == "MELON":
         return 10
+    
+    if crop_name == "STRAWBERRY":
+        return 10
+
     return 2
 
 
@@ -120,6 +124,12 @@ def get_tile_action(tile, day):
 
     if not tile.get("watered_today", True):
         return ["WATER"]
+
+    if crop_name == "STRAWBERRY":
+        if (crop_age >= harvest_age and tile.get("yield_units", 0) > 0):
+            return ["HARVEST"]
+        
+        return None
 
     if crop_age >= harvest_age:
         return ["HARVEST"]
@@ -309,7 +319,14 @@ def find_target_tile(
                 crop_age = day - tile.get("planted_day", day)
                 harvest_age = get_harvest_age(crop_name)
 
-                if crop_age >= harvest_age:
+                if crop_name == "STRAWBERRY":
+                    if (crop_age >= harvest_age and tile.get("yield_units", 0) > 0):
+                        base_score = 25
+                    
+                    elif not tile.get("watered_today", True):
+                        base_score = 50
+                
+                elif crop_age >= harvest_age:
                     if crop_name == "MELON":
                         base_score = 250
                     else:
@@ -429,13 +446,19 @@ def build_market_actions(
     wheat_seeds = seeds.get("WHEAT", 0)
     melon_seeds = seeds.get("MELON", 0)
 
+    strawberry_seeds = seeds.get("STRAWBERRY", 0)
+
     wheat_in_shed = shed.get("WHEAT", 0)
     melon_in_shed = shed.get("MELON", 0)
 
     milk_in_shed = shed.get("MILK", 0)
+    
+    strawberry_in_shed = shed.get("STRAWBERRY", 0)
+
 
     # 種を購入
     melon_planted_count = 0
+    strawberry_planted_count = 0
 
     for row in me["tiles"]:
         for tile in row:
@@ -445,6 +468,13 @@ def build_market_actions(
                 and tile.get("crop") == "MELON"
             ):
                 melon_planted_count += 1
+
+            if(
+                isinstance(tile, dict)
+                and tile.get("kind") == "PLANT"
+                and tile.get("crop") == "STRAWBERRY"
+            ):
+                strawberry_planted_count += 1
 
     melon_total = melon_seeds + melon_planted_count
     melon_to_buy = max(10 - melon_total, 0)
@@ -457,6 +487,17 @@ def build_market_actions(
         market.append(
             ["BUY_SEED", "MELON", melon_to_buy]
         )
+
+    strawberry_total = (strawberry_seeds + strawberry_planted_count)
+    strawberry_to_buy = max(4 - strawberry_total, 0,)
+
+    if (len(unlocked_quads) >= 3
+        and day < 20
+        and strawberry_to_buy > 0
+        and money >= strawberry_to_buy * 100
+    ):
+
+        market.append(["BUY_SEED", "STRAWBERRY", strawberry_to_buy,])
 
     if wheat_seeds == 0 and money >= 10:
         market.append(["BUY_SEED", "WHEAT", 6])
@@ -479,6 +520,10 @@ def build_market_actions(
     if milk_in_shed > 0:
         if should_sell_milk(milk_price, step):
             market.append(["SELL", "MILK", milk_in_shed])
+
+    #STRAWBERRY売却
+    if strawberry_in_shed > 0:
+        market.append(["SELL", "STRAWBERRY", strawberry_in_shed])
 
     # MELON売却
     if melon_in_shed > 0:
@@ -546,11 +591,14 @@ def agent(obs, config):
 
     wheat_seeds = seeds.get("WHEAT", 0)
     melon_seeds = seeds.get("MELON", 0)
+    strawberry_seeds = seeds.get("STRAWBERRY", 0)
 
     remaining_wheat_seeds = wheat_seeds
     remaining_melon_seeds = melon_seeds
+    remaining_strawberry_seeds = strawberry_seeds
 
     melon_plant_allowed = day < 8
+    strawberry_plant_allowed = day < 20
 
     wheat_in_shed = shed.get("WHEAT", 0)
 
@@ -672,6 +720,10 @@ def agent(obs, config):
             farmer_action = ["PLANT", "MELON",]
             remaining_melon_seeds -= 1
 
+        elif (strawberry_plant_allowed and remaining_strawberry_seeds > 0):
+            farmer_action = ["PLANT", "STRAWBERRY",]
+            remaining_strawberry_seeds -= 1
+
         elif remaining_wheat_seeds > 0:
             farmer_action = ["PLANT", "WHEAT",]
             remaining_wheat_seeds -= 1
@@ -707,7 +759,9 @@ def agent(obs, config):
     if farmer_action is None:
 
         remaining_has_seeds = (
-            remaining_wheat_seeds > 0 or (melon_plant_allowed and remaining_melon_seeds > 0)
+            remaining_wheat_seeds > 0 
+            or (melon_plant_allowed and remaining_melon_seeds > 0)
+            or (strawberry_plant_allowed and remaining_strawberry_seeds > 0)
         )
 
         target = find_target_tile(
@@ -833,6 +887,10 @@ def agent(obs, config):
                     if melon_plant_allowed and remaining_melon_seeds > 0:
                         hand_action = ["PLANT", "MELON",]
                         remaining_melon_seeds -= 1
+                    
+                    elif strawberry_plant_allowed and remaining_strawberry_seeds > 0:
+                        hand_action = ["PLANT", "STRAWBERRY",]
+                        remaining_strawberry_seeds -= 1                    
 
                     elif remaining_wheat_seeds > 0:
                         hand_action = ["PLANT", "WHEAT",]
@@ -862,6 +920,11 @@ def agent(obs, config):
                     or (
                         melon_plant_allowed
                         and remaining_melon_seeds > 0
+                    )
+
+                    or (
+                        strawberry_plant_allowed
+                        and remaining_strawberry_seeds > 0
                     )
                 )
 
@@ -897,6 +960,10 @@ def agent(obs, config):
                 if melon_plant_allowed and remaining_melon_seeds > 0:
                     hand_action = ["PLANT", "MELON",]
                     remaining_melon_seeds -= 1
+                
+                elif strawberry_plant_allowed and remaining_strawberry_seeds > 0:
+                    hand_action = ["PLANT", "STRAWBERRY",]
+                    remaining_strawberry_seeds -= 1
 
                 elif remaining_wheat_seeds > 0:
                     hand_action = ["PLANT", "WHEAT",]
@@ -935,6 +1002,10 @@ def agent(obs, config):
                     or (
                         melon_plant_allowed
                         and remaining_melon_seeds > 0
+                    )
+                    or (
+                        strawberry_plant_allowed
+                        and remaining_strawberry_seeds > 0
                     )
                 )
 
