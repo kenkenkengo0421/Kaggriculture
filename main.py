@@ -836,6 +836,9 @@ def agent(obs, config):
                     day,
                 )
 
+                if hand_action == ["HARVEST"] and (hx, hy) in claimed_targets:
+                    hand_action = None
+
                 if hand_action is None:
                     cow_target = find_cow_target(
                         tiles,
