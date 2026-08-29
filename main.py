@@ -320,7 +320,13 @@ def find_target_tile(
                 harvest_age = get_harvest_age(crop_name)
 
                 if crop_name == "STRAWBERRY":
-                    if (crop_age >= harvest_age and tile.get("yield_units", 0) > 0):
+                    if( 
+                        not tile.get("watered_today", True)
+                        and tile.get("consecutive_unwatered", 0) >= 1
+                    ):
+                        base_score = 75
+
+                    elif (crop_age >= harvest_age and tile.get("yield_units", 0) > 0):
                         base_score = 25
 
                     elif not tile.get("watered_today", True):
@@ -329,11 +335,16 @@ def find_target_tile(
                 elif crop_age >= harvest_age:
                     if crop_name == "MELON":
                         base_score = 250
+                    
                     else:
                         base_score = 25
 
                 elif not tile.get("watered_today", True):
-                    base_score = 50
+                    if tile.get("consecutive_unwatered", 0) >= 1:
+                        base_score = 75
+
+                    else:
+                        base_score = 50
 
             # 空き地
             elif tile is None and has_seeds:
