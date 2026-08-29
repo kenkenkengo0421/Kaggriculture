@@ -85,7 +85,7 @@ def get_harvest_age(crop_name):
     """現在の戦略で使う収穫開始日を返す。"""
     if crop_name == "MELON":
         return 10
-    
+
     if crop_name == "STRAWBERRY":
         return 10
 
@@ -128,7 +128,7 @@ def get_tile_action(tile, day):
     if crop_name == "STRAWBERRY":
         if (crop_age >= harvest_age and tile.get("yield_units", 0) > 0):
             return ["HARVEST"]
-        
+
         return None
 
     if crop_age >= harvest_age:
@@ -322,10 +322,10 @@ def find_target_tile(
                 if crop_name == "STRAWBERRY":
                     if (crop_age >= harvest_age and tile.get("yield_units", 0) > 0):
                         base_score = 25
-                    
+
                     elif not tile.get("watered_today", True):
                         base_score = 50
-                
+
                 elif crop_age >= harvest_age:
                     if crop_name == "MELON":
                         base_score = 250
@@ -452,7 +452,7 @@ def build_market_actions(
     melon_in_shed = shed.get("MELON", 0)
 
     milk_in_shed = shed.get("MILK", 0)
-    
+
     strawberry_in_shed = shed.get("STRAWBERRY", 0)
 
 
@@ -759,7 +759,7 @@ def agent(obs, config):
     if farmer_action is None:
 
         remaining_has_seeds = (
-            remaining_wheat_seeds > 0 
+            remaining_wheat_seeds > 0
             or (melon_plant_allowed and remaining_melon_seeds > 0)
             or (strawberry_plant_allowed and remaining_strawberry_seeds > 0)
         )
@@ -887,10 +887,10 @@ def agent(obs, config):
                     if melon_plant_allowed and remaining_melon_seeds > 0:
                         hand_action = ["PLANT", "MELON",]
                         remaining_melon_seeds -= 1
-                    
+
                     elif strawberry_plant_allowed and remaining_strawberry_seeds > 0:
                         hand_action = ["PLANT", "STRAWBERRY",]
-                        remaining_strawberry_seeds -= 1                    
+                        remaining_strawberry_seeds -= 1
 
                     elif remaining_wheat_seeds > 0:
                         hand_action = ["PLANT", "WHEAT",]
@@ -901,6 +901,10 @@ def agent(obs, config):
                     and hand_tile.get("animal")
                 ):
                     hand_action = get_tile_action(hand_tile, day,)
+
+                    if(hand_action == ["HARVEST"] and (hx, hy) in claimed_targets):
+                        hand_action = None
+
 
             if hand_action is None:
                 cow_coords = set()
@@ -960,7 +964,7 @@ def agent(obs, config):
                 if melon_plant_allowed and remaining_melon_seeds > 0:
                     hand_action = ["PLANT", "MELON",]
                     remaining_melon_seeds -= 1
-                
+
                 elif strawberry_plant_allowed and remaining_strawberry_seeds > 0:
                     hand_action = ["PLANT", "STRAWBERRY",]
                     remaining_strawberry_seeds -= 1
@@ -983,6 +987,9 @@ def agent(obs, config):
                     hand_tile,
                     day,
                 )
+
+            if (hand_action == ["HARVEST"] and (hx, hy) in claimed_targets):
+                hand_action = None
 
             if hand_action is None:
                 cow_coords = set()
