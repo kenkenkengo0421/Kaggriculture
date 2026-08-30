@@ -655,6 +655,21 @@ def agent(obs, config):
 
     target_hands = hire_state["target_hands"]
 
+    urgent_unwatered_count = 0
+
+    for row in tiles:
+        for tile in row:
+            if (
+                isinstance(tile, dict)
+                and tile.get("kind") == "PLANT"
+                and not tile.get("watered_today", True)
+                and tile.get("consecutive_unwatered", 0) >= 1
+            ):
+                urgent_unwatered_count += 1
+
+    plant_allowed = (urgent_unwatered_count == 0)
+
+
     # 市場
 
     market = build_market_actions(
@@ -727,15 +742,26 @@ def agent(obs, config):
         if cow_in_shed > 0 and pasture_count < 4:
             farmer_action = ["BUILD_PASTURE",]
 
-        elif melon_plant_allowed and remaining_melon_seeds > 0:
+        elif (
+            plant_allowed
+            and melon_plant_allowed
+            and remaining_melon_seeds > 0
+        ):
             farmer_action = ["PLANT", "MELON",]
             remaining_melon_seeds -= 1
 
-        elif (strawberry_plant_allowed and remaining_strawberry_seeds > 0):
+        elif (
+            plant_allowed
+            and strawberry_plant_allowed 
+            and remaining_strawberry_seeds > 0
+        ):
             farmer_action = ["PLANT", "STRAWBERRY",]
             remaining_strawberry_seeds -= 1
 
-        elif remaining_wheat_seeds > 0:
+        elif (
+            plant_allowed
+            and remaining_wheat_seeds > 0
+        ):
             farmer_action = ["PLANT", "WHEAT",]
             remaining_wheat_seeds -= 1
 
@@ -770,10 +796,14 @@ def agent(obs, config):
     if farmer_action is None:
 
         remaining_has_seeds = (
-            remaining_wheat_seeds > 0
-            or (melon_plant_allowed and remaining_melon_seeds > 0)
-            or (strawberry_plant_allowed and remaining_strawberry_seeds > 0)
+            plant_allowed 
+            and (
+                remaining_wheat_seeds > 0            
+                or (melon_plant_allowed and remaining_melon_seeds > 0)
+                or (strawberry_plant_allowed and remaining_strawberry_seeds > 0)
+                )
         )
+    
 
         target = find_target_tile(
             tiles,
@@ -898,15 +928,15 @@ def agent(obs, config):
 
             if hand_action is None:
                 if hand_tile is None:
-                    if melon_plant_allowed and remaining_melon_seeds > 0:
+                    if plant_allowed and melon_plant_allowed and remaining_melon_seeds > 0:
                         hand_action = ["PLANT", "MELON",]
                         remaining_melon_seeds -= 1
 
-                    elif strawberry_plant_allowed and remaining_strawberry_seeds > 0:
+                    elif plant_allowed and strawberry_plant_allowed and remaining_strawberry_seeds > 0:
                         hand_action = ["PLANT", "STRAWBERRY",]
                         remaining_strawberry_seeds -= 1
 
-                    elif remaining_wheat_seeds > 0:
+                    elif plant_allowed and remaining_wheat_seeds > 0:
                         hand_action = ["PLANT", "WHEAT",]
                         remaining_wheat_seeds -= 1
 
@@ -934,15 +964,18 @@ def agent(obs, config):
                             cow_coords.add((x, y))
 
                 remaining_has_seeds = (
-                    remaining_wheat_seeds > 0
-                    or (
-                        melon_plant_allowed
-                        and remaining_melon_seeds > 0
-                    )
+                    plant_allowed
+                    and(                   
+                        remaining_wheat_seeds > 0
+                        or (
+                            melon_plant_allowed
+                            and remaining_melon_seeds > 0
+                        )
 
-                    or (
-                        strawberry_plant_allowed
-                        and remaining_strawberry_seeds > 0
+                        or (
+                            strawberry_plant_allowed
+                            and remaining_strawberry_seeds > 0
+                        )
                     )
                 )
 
@@ -975,15 +1008,15 @@ def agent(obs, config):
         else:
 
             if hand_tile is None:
-                if melon_plant_allowed and remaining_melon_seeds > 0:
+                if plant_allowed and melon_plant_allowed and remaining_melon_seeds > 0:
                     hand_action = ["PLANT", "MELON",]
                     remaining_melon_seeds -= 1
 
-                elif strawberry_plant_allowed and remaining_strawberry_seeds > 0:
+                elif plant_allowed and strawberry_plant_allowed and remaining_strawberry_seeds > 0:
                     hand_action = ["PLANT", "STRAWBERRY",]
                     remaining_strawberry_seeds -= 1
 
-                elif remaining_wheat_seeds > 0:
+                elif plant_allowed and remaining_wheat_seeds > 0:
                     hand_action = ["PLANT", "WHEAT",]
                     remaining_wheat_seeds -= 1
 
@@ -1019,14 +1052,18 @@ def agent(obs, config):
                             cow_coords.add((x, y))
 
                 remaining_has_seeds = (
-                    remaining_wheat_seeds > 0
-                    or (
-                        melon_plant_allowed
-                        and remaining_melon_seeds > 0
-                    )
-                    or (
-                        strawberry_plant_allowed
-                        and remaining_strawberry_seeds > 0
+                    plant_allowed
+
+                    and (
+                        remaining_wheat_seeds > 0
+                        or (
+                            melon_plant_allowed
+                            and remaining_melon_seeds > 0
+                        )
+                        or (
+                            strawberry_plant_allowed
+                            and remaining_strawberry_seeds > 0
+                        )
                     )
                 )
 
