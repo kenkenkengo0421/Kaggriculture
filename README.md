@@ -18,7 +18,7 @@
 |[使用した関数、クラス群](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/Kaggriculture_Movements_in_the_top_xx%25/column.md)|`column.md`||
 |[提出関数(メイン)](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/main.ipynb)|`main.ipynb`||
 |[分割コード](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/Kaggriculture_Movements_in_the_top_xx%25/sub_main.ipynb)|`sub_main.ipynb`||
-|[社長と従業員の動き](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/Kaggriculture_Movements_in_the_top_xx%25/range_of_action.ipynb)|`range_of_action.ipynb`||
+|[社長と従業員の動き](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/Kaggriculture_Movements_in_the_top_xx%25/range_of_action.ipynb)|`range_of_action.ipynb`|[kaggle notebook(ファイルサイズが大きいのでここで確認)](https://www.kaggle.com/code/nagatakengo/range-of-action)|
 |[雇用とコストと物価](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/Kaggriculture_Movements_in_the_top_xx%25/costs.ipynb)|`costs.ipynb`||
 |[未来のメロンの価格を予測](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/Kaggriculture_Movements_in_the_top_xx%25/Predict_future_melon_prices.ipynb)|`Predict_future_melon_prices.ipynb`||
 
