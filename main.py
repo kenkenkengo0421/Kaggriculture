@@ -320,7 +320,7 @@ def find_target_tile(
                 harvest_age = get_harvest_age(crop_name)
 
                 if crop_name == "STRAWBERRY":
-                    if( 
+                    if(
                         not tile.get("watered_today", True)
                         and tile.get("consecutive_unwatered", 0) >= 1
                     ):
@@ -335,7 +335,7 @@ def find_target_tile(
                 elif crop_age >= harvest_age:
                     if crop_name == "MELON":
                         base_score = 250
-                    
+
                     else:
                         base_score = 25
 
@@ -405,7 +405,7 @@ def update_hire_control(
             # PASS率5%以下なら1人増やす
             elif pass_rate <= 0.05:
                 state["target_hands"] = min(
-                    6,
+                    8,
                     state["target_hands"] + 1,
                 )
 
