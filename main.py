@@ -262,6 +262,22 @@ def find_cow_target(tiles, fx, fy, day):
 
     return best_target
 
+def get_hand_area(hand_index):
+    """作業員ごとの担当エリアを返す"""
+
+    hand_areas = {
+        0: "NW",
+        1: "NE",
+        2: "SW",
+        3: "NE",
+        4: "SW",
+        5: "NW",
+        6: "NE",
+        7: "NW",
+    }
+
+    return hand_areas.get(hand_index)
+
 
 def find_target_tile(
     tiles,
@@ -270,6 +286,7 @@ def find_target_tile(
     has_seeds,
     day,
     excluded_coords=None,
+    target_area=None,
 ):
     """
     現在位置から各作業候補を評価し、
@@ -285,6 +302,25 @@ def find_target_tile(
         for x in range(len(tiles[0])):
             if (x, y) in excluded_coords:
                 continue
+
+            outside_area = False
+
+            if target_area == "NW":
+                if not (x < 5 and y < 5):
+                    outside_area = True
+
+            elif target_area == "NE":
+                if not (x >= 5 and y < 5):
+                    outside_area = True
+
+            elif target_area == "SW":
+                if not (x < 5 and y >= 5):
+                    outside_area = True
+
+            elif target_area == "SE":
+                if not (x >= 5 and y >= 5):
+                    outside_area = True
+
 
             tile = tiles[y][x]
             if tile == "LOCKED":
@@ -358,6 +394,9 @@ def find_target_tile(
 
             movement_cost = abs(x - fx) + abs(y - fy)
             task_score = base_score - movement_cost
+
+            if outside_area:
+                task_score -= 15
 
             if task_score > best_score:
                 best_score = task_score
@@ -752,7 +791,7 @@ def agent(obs, config):
 
         elif (
             plant_allowed
-            and strawberry_plant_allowed 
+            and strawberry_plant_allowed
             and remaining_strawberry_seeds > 0
         ):
             farmer_action = ["PLANT", "STRAWBERRY",]
@@ -796,14 +835,14 @@ def agent(obs, config):
     if farmer_action is None:
 
         remaining_has_seeds = (
-            plant_allowed 
+            plant_allowed
             and (
-                remaining_wheat_seeds > 0            
+                remaining_wheat_seeds > 0
                 or (melon_plant_allowed and remaining_melon_seeds > 0)
                 or (strawberry_plant_allowed and remaining_strawberry_seeds > 0)
                 )
         )
-    
+
 
         target = find_target_tile(
             tiles,
@@ -965,7 +1004,7 @@ def agent(obs, config):
 
                 remaining_has_seeds = (
                     plant_allowed
-                    and(                   
+                    and(
                         remaining_wheat_seeds > 0
                         or (
                             melon_plant_allowed
@@ -979,6 +1018,8 @@ def agent(obs, config):
                     )
                 )
 
+                hand_area = get_hand_area(hand_index,)
+
                 target = find_target_tile(
                     tiles,
                     hx,
@@ -986,7 +1027,9 @@ def agent(obs, config):
                     remaining_has_seeds,
                     day,
                     claimed_targets | cow_coords,
+                    hand_area,
                 )
+
 
                 if target is not None:
                     claimed_targets.add(target)
@@ -1067,6 +1110,8 @@ def agent(obs, config):
                     )
                 )
 
+                hand_area = get_hand_area(hand_index,)
+
                 target = find_target_tile(
                     tiles,
                     hx,
@@ -1074,7 +1119,9 @@ def agent(obs, config):
                     remaining_has_seeds,
                     day,
                     claimed_targets | cow_coords,
+                    hand_area,
                 )
+
 
                 if target is not None:
                     claimed_targets.add(target)
