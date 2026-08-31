@@ -408,6 +408,7 @@ def update_hire_control(
     player,
     day,
     step,
+    unlocked_quads,
 ):
     """前日の作業員PASS率から目標作業員数を更新する。"""
 
@@ -447,6 +448,11 @@ def update_hire_control(
                     8,
                     state["target_hands"] + 1,
                 )
+        if len(unlocked_quads) >= 3:
+            state["target_hands"] = max(
+                7,
+                state["target_hands"],
+            )
 
         state["day"] = day
         state["pass_count"] = 0
@@ -539,7 +545,7 @@ def build_market_actions(
         )
 
     strawberry_total = (strawberry_seeds + strawberry_planted_count)
-    strawberry_to_buy = max(4 - strawberry_total, 0,)
+    strawberry_to_buy = max(8 - strawberry_total, 0,)
 
     if (len(unlocked_quads) >= 3
         and day < 20
@@ -690,6 +696,7 @@ def agent(obs, config):
         player,
         day,
         step,
+        me.get("unlocked_quadrants", ["NW"],),
     )
 
     target_hands = hire_state["target_hands"]
