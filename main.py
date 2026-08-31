@@ -396,7 +396,7 @@ def find_target_tile(
             task_score = base_score - movement_cost
 
             if outside_area:
-                task_score -= 15
+                task_score -= 30
 
             if task_score > best_score:
                 best_score = task_score
