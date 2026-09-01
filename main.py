@@ -1,5 +1,5 @@
 
-import random
+
 
 
 hire_control_states = {}
@@ -145,6 +145,9 @@ def step_toward(fx, fy, tx, ty, tiles):
     max_y = len(tiles) - 1
     max_x = len(tiles[0]) - 1
 
+    if fx == tx and fy == ty:
+        return "PASS"
+
     candidates = []
 
     if fx < tx and fx < max_x and tiles[fy][fx + 1] != "LOCKED":
@@ -158,8 +161,24 @@ def step_toward(fx, fy, tx, ty, tiles):
         candidates.append("NORTH")
 
     if candidates:
-        return random.choice(candidates)
+        x_distance = abs(tx - fx)
+        y_distance = abs(ty - fy)
 
+        if x_distance >= y_distance:
+            if "EAST" in candidates:
+                return "EAST"
+
+            if "WEST" in candidates:
+                return "WEST"
+
+        if "SOUTH" in candidates:
+            return "SOUTH"
+
+        if "NORTH" in candidates:
+            return "NORTH"
+
+        return candidates[0]
+        
     valid_dirs = []
 
     if fy > 0 and tiles[fy - 1][fx] != "LOCKED":
@@ -175,7 +194,29 @@ def step_toward(fx, fy, tx, ty, tiles):
         valid_dirs.append("WEST")
 
     if valid_dirs:
-        return random.choice(valid_dirs)
+        direction_offsets = {
+            "NORTH": (0, -1),
+            "SOUTH": (0, 1),
+            "EAST": (1, 0),
+            "WEST": (-1, 0),
+        }
+
+        best_dir = None
+        best_distance = 9999
+
+        for move_dir in valid_dirs:
+            dx, dy = direction_offsets[move_dir]
+
+            next_x = fx + dx
+            next_y = fy + dy
+
+            distance = (abs(tx - next_x) + abs(ty - next_y))
+
+            if distance < best_distance:
+                best_distance = distance
+                best_dir = move_dir
+
+        return best_dir
 
     return "PASS"
 
@@ -480,6 +521,7 @@ def build_market_actions(
     me,
     seeds,
     shed,
+    inventories,
     day,
     step,
     melon_price,
@@ -487,6 +529,7 @@ def build_market_actions(
     cow_count,
     target_hands,
     milk_price,
+    max_market_orders,
 ):
     """現在の市場売買・雇用・土地購入ルールから注文一覧を作る。"""
 
@@ -561,13 +604,72 @@ def build_market_actions(
 
     # WHEAT売却
     if cow_count > 0:
-        if wheat_in_shed < 2:
-            market.append(["BUY_PRODUCT", "WHEAT", 2 - wheat_in_shed,])
+        unfed_cow_count = 0
 
-        wheat_to_sell = max(wheat_in_shed - 2, 0,)
+        for row in me["tiles"]:
+            for tile in row:
+                if(
+                    isinstance(tile, dict)
+                    and tile.get("animal") == "COW"
+                    and not tile.get("fed_today", False)
+                ):
+                    unfed_cow_count += 1
+
+
+        feed_worker_wheat = 0
+
+        if len(inventories) > 0:
+            feed_worker_wheat += inventories[0].get(
+                "WHEAT",
+                0,
+            )
+
+        if len(inventories) > 1:
+            feed_worker_wheat += inventories[1].get(
+                "WHEAT",
+                0,
+            )
+
+        available_feed_wheat = (
+            wheat_in_shed
+            + feed_worker_wheat
+        )
+
+        target_feed_wheat = max(
+            unfed_cow_count,
+            2,
+        )
+
+        wheat_to_buy = max(
+            target_feed_wheat
+            - available_feed_wheat,
+            0,
+        )
+
+        if wheat_to_buy > 0:
+            market.append([
+                "BUY_PRODUCT",
+                "WHEAT",
+                wheat_to_buy,
+            ])
+
+        excess_wheat = max(
+            available_feed_wheat
+            - target_feed_wheat,
+            0,
+        )
+
+        wheat_to_sell = min(
+            wheat_in_shed,
+            excess_wheat,
+        )
 
         if wheat_to_sell > 0:
-            market.append(["SELL", "WHEAT", wheat_to_sell,])
+            market.append([
+                "SELL",
+                "WHEAT",
+                wheat_to_sell,
+            ])
 
     elif wheat_in_shed > 0:
         market.append(["SELL", "WHEAT", wheat_in_shed])
@@ -592,25 +694,41 @@ def build_market_actions(
         ):
             market.append(["SELL", "MELON", melon_in_shed])
 
-    #目標作業員数までHIRE
+    # HIRE後に追加される注文枠を事前に確保
+    will_buy_land = (
+        len(unlocked_quads) < 3
+        and money >= 5000
+    )
 
-    if len(current_hands) < target_hands:
-        market.append(["HIRE"])
-
-
-    # 土地購入
-    if len(unlocked_quads) < 3 and money >= 5000:
-        market.insert(0,["BUY_LAND"],)
-
-
-    #cowを飼う
     cow_in_shed = shed.get("COW", 0)
 
-    if(
+    will_buy_cow = (
         len(unlocked_quads) >= 1
         and cow_count < 4
         and money >= 400
-    ):
+    )
+
+    reserved_market_orders = (
+        int(will_buy_land) + int(will_buy_cow)
+    )
+
+    available_hire_slots = max(
+        max_market_orders - len(market) - reserved_market_orders, 0,
+    )
+
+    hire_count = min(max(target_hands - len(current_hands), 0), available_hire_slots)
+
+    for _ in range(hire_count):
+        market.append(["HIRE"])
+
+
+
+    # 土地購入
+    if will_buy_land:
+        market.insert(0, ["BUY_LAND"],)
+
+    #cowを飼う
+    if will_buy_cow:
         market.append(["BUY_ANIMAL", "COW", 1])
 
 
@@ -722,6 +840,7 @@ def agent(obs, config):
         me,
         seeds,
         shed,
+        inventories,
         day,
         step,
         melon_price,
@@ -729,6 +848,7 @@ def agent(obs, config):
         cow_count,
         target_hands,
         milk_price,
+        config.get("maxMarketOrdersPerTurn", 10,),
     )
 
     # メイン農家
