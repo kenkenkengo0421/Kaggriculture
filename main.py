@@ -529,6 +529,7 @@ def build_market_actions(
     cow_count,
     target_hands,
     milk_price,
+    milk_demand_shops_count,
     max_market_orders,
 ):
     """現在の市場売買・雇用・土地購入ルールから注文一覧を作る。"""
@@ -677,7 +678,16 @@ def build_market_actions(
     #MILK売却
     if milk_in_shed > 0:
         if should_sell_milk(milk_price, step):
-            market.append(["SELL", "MILK", milk_in_shed])
+            milk_to_sell = (
+                milk_in_shed
+                if (
+                    step >= 710
+                    or milk_demand_shops_count <= 1
+                )    
+                else min(milk_in_shed, 6)
+            )
+
+            market.append(["SELL", "MILK", milk_to_sell,])
 
     #STRAWBERRY売却
     if strawberry_in_shed > 0:
@@ -759,6 +769,20 @@ def agent(obs, config):
     current_hands = me.get("hands", [])
 
     milk_price = get_market_price(obs, "MILK",)
+
+    milk_demand_shops = {
+        "PIZZA_SHOP",
+        "ICE_CREAM_SHOP",
+        "SMOOTHIE_SHOP",
+    }
+
+    unlocked_shops = obs.get("town", {},).get("unlocked_shops", [],)
+
+    milk_demand_shops_count = sum(
+        1
+        for shop in unlocked_shops
+        if shop in milk_demand_shops
+    )
 
     melon_price = get_market_price(obs, "MELON",)
     melon_stock = obs["market"]["inventory"]["MELON"]
@@ -848,6 +872,7 @@ def agent(obs, config):
         cow_count,
         target_hands,
         milk_price,
+        milk_demand_shops_count,
         config.get("maxMarketOrdersPerTurn", 10,),
     )
 
