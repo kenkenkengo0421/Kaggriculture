@@ -92,7 +92,7 @@ def get_harvest_age(crop_name):
     return 2
 
 
-def get_tile_action(tile, day):
+def get_tile_action(tile, day, allow_fertilizer_collection=True,):
     """足元のタイルで今すぐ行う作業を返す。"""
     if not isinstance(tile, dict):
         return None
@@ -110,7 +110,10 @@ def get_tile_action(tile, day):
         if tile.get("yield_units", 0) > 0:
             return ["HARVEST"]
 
-        if tile.get("fertilizer_available", 0) > 0:
+        if (
+            allow_fertilizer_collection
+            and tile.get("fertilizer_available", 0) > 0
+        ):
             return ["COLLECT_FERTILIZER"]
 
         return None
@@ -178,7 +181,7 @@ def step_toward(fx, fy, tx, ty, tiles):
             return "NORTH"
 
         return candidates[0]
-        
+
     valid_dirs = []
 
     if fy > 0 and tiles[fy - 1][fx] != "LOCKED":
@@ -279,7 +282,13 @@ def find_fertilize_target(
     return best_target
 
 
-def find_cow_target(tiles, fx, fy, day):
+def find_cow_target(
+    tiles,
+    fx,
+    fy,
+    day,
+    allow_fertilizer_collection=True,
+):
     """現在位置から最も近い作業対象のCOWを返す"""
 
     best_target = None
@@ -293,7 +302,11 @@ def find_cow_target(tiles, fx, fy, day):
             if(
                 isinstance(tile, dict)
                 and tile.get("animal") == "COW"
-                and get_tile_action(tile, day)is not None
+                and get_tile_action(
+                    tile,
+                    day,
+                    allow_fertilizer_collection,
+                ) is not None
             ):
                 distance = abs(x - fx) + abs(y - fy)
 
@@ -683,7 +696,7 @@ def build_market_actions(
                 if (
                     step >= 710
                     or milk_demand_shops_count <= 1
-                )    
+                )
                 else min(milk_in_shed, 6)
             )
 
@@ -740,6 +753,22 @@ def build_market_actions(
     #cowを飼う
     if will_buy_cow:
         market.append(["BUY_ANIMAL", "COW", 1])
+
+    # 売却注文を最優先にする
+    sell_orders = [
+        order
+        for order in market
+        if order[0] == "SELL"
+
+    ]
+
+    other_orders = [
+        order
+        for order in market
+        if order[0] != "SELL"
+    ]
+
+    market = (sell_orders + other_orders)
 
 
     return market
@@ -1066,6 +1095,7 @@ def agent(obs, config):
                 hand_action = get_tile_action(
                     hand_tile,
                     day,
+                    False,
                 )
 
                 if hand_action == ["HARVEST"] and (hx, hy) in claimed_targets:
@@ -1077,6 +1107,7 @@ def agent(obs, config):
                         hx,
                         hy,
                         day,
+                        False,
                     )
 
                     if cow_target is not None:
@@ -1092,13 +1123,13 @@ def agent(obs, config):
                     else:
                         hand_action = None
 
-
             else:
                 cow_target = find_cow_target(
                     tiles,
                     hx,
                     hy,
                     day,
+                    False,
                 )
 
                 if cow_target is not None:
@@ -1273,7 +1304,6 @@ def agent(obs, config):
                     claimed_targets | cow_coords,
                     hand_area,
                 )
-
 
                 if target is not None:
                     claimed_targets.add(target)
