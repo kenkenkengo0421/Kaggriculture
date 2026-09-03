@@ -693,10 +693,7 @@ def build_market_actions(
         if should_sell_milk(milk_price, step):
             milk_to_sell = (
                 milk_in_shed
-                if (
-                    step >= 710
-                    or milk_demand_shops_count <= 1
-                )
+                if step >= 710
                 else min(milk_in_shed, 6)
             )
 
@@ -739,7 +736,7 @@ def build_market_actions(
         max_market_orders - len(market) - reserved_market_orders, 0,
     )
 
-    hire_count = min(max(target_hands - len(current_hands), 0), available_hire_slots)
+    hire_count = min(max(target_hands - len(current_hands), 0), available_hire_slots, 2)
 
     for _ in range(hire_count):
         market.append(["HIRE"])
