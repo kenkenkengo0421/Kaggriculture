@@ -602,7 +602,7 @@ def build_market_actions(
         )
 
     strawberry_total = (strawberry_seeds + strawberry_planted_count)
-    strawberry_to_buy = max(25 - strawberry_total, 0,)
+    strawberry_to_buy = max(35 - strawberry_total, 0,)
 
     if (len(unlocked_quads) >= 3
         and day < 20
