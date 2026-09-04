@@ -1,9 +1,105 @@
 
+class StrategyConfig:
+    """設定"""
 
+    # 牛乳・メロンの強制売却を開始するSTEP
+    FINAL_SELL_STEP = 710
 
+    # メロンを収穫対象として扱い始める経過日数
+    MELON_HARVEST_AGE = 10
 
-hire_control_states = {}
+    # いちごを収穫対象として扱い始める経過日数
+    STRAWBERRY_HARVEST_AGE = 10
 
+    # メロン・いちご以外の作物に使用する収穫経過日数
+    DEFAULT_HARVEST_AGE = 2
+
+    # メロンの植付けと種購入を許可する期限
+    MELON_PLANT_END_DAY = 8
+
+    # いちごの植付けと種購入を許可する期限
+    STRAWBERRY_PLANT_END_DAY = 20
+
+    # 作業対象探索から雑草と空き地を除外し始める日
+    GENERAL_PLANT_END_DAY = 27
+
+    # メロンの種数と植付済み数を合わせた購入目標数
+    MELON_TARGET_COUNT = 10
+
+    # いちごの種数と植付済み数を合わせた購入目標数
+    STRAWBERRY_TARGET_COUNT = 35
+
+    # メロン種を購入できるか判定するための単価
+    MELON_SEED_PRICE = 80
+
+    # いちご種を購入できるか判定するための単価
+    STRAWBERRY_SEED_PRICE = 100
+
+    # 小麦種の購入を許可する最低所持金
+    WHEAT_SEED_PRICE = 10
+
+    # 小麦種がない場合に購入する数量
+    WHEAT_SEED_BUY_COUNT = 6
+
+    # 牛乳を通常売却する最低価格
+    MILK_SELL_PRICE = 160
+
+    # 終盤以外で一度に売却する牛乳の上限数
+    MILK_SELL_BATCH = 6
+
+    # 牛の餌として最低限確保する小麦数
+    MIN_FEED_WHEAT = 2
+
+    # 購入を進める土地の目標区画数
+    TARGET_LAND_COUNT = 3
+
+    # 土地購入を許可する最低所持金
+    LAND_PRICE = 5000
+
+    # 購入を進める牛の目標頭数
+    TARGET_COW_COUNT = 4
+
+    # 牛購入を許可する最低所持金
+    COW_PRICE = 400
+
+    # 建設を進める牧草地の目標数
+    TARGET_PASTURE_COUNT = 4
+
+    # 1ターンに雇用する作業員の上限数
+    MAX_HIRES_PER_TURN = 2
+
+    # 対戦開始時の目標作業員数
+    INITIAL_TARGET_HANDS = 6
+
+    # 土地が3区画以上になった場合の最低作業員数
+    MIN_LARGE_FARM_HANDS = 7
+
+    # PASS率による増員で許可する作業員の上限数
+    MAX_HANDS = 8
+
+    # 作業員を1人減らすPASS率
+    PASS_RATE_TO_DECREASE = 0.15
+
+    # 作業員を1人増やすPASS率
+    PASS_RATE_TO_INCREASE = 0.05
+
+    # 倉庫が置かれている座標
+    SHED_COORD = (4, 4)
+
+    # 担当エリア外の作業候補に与える減点
+    OUTSIDE_AREA_PENALTY = 30
+
+    # 作業員番号ごとの優先担当エリア
+    HAND_AREAS = {
+        0: "NW",
+        1: "NE",
+        2: "SW",
+        3: "NE",
+        4: "SW",
+        5: "NW",
+        6: "NE",
+        7: "NW",
+    }
 
 def get_market_price(obs, product):
     """現在価格を取得する。"""
@@ -43,13 +139,12 @@ def should_sell_melon(
     melon_price,
     melon_stock,
     melon_in_shed,
-    day,
     step,
 ):
     """MELONをSELLするかHOLDするか判断する。"""
 
     # 終盤は価格に関係なく売却
-    if step >= 710:
+    if step >= StrategyConfig.FINAL_SELL_STEP:
         return True
 
     # 12ターン以内の最高価格を予測
@@ -72,10 +167,10 @@ def should_sell_melon(
 def should_sell_milk(milk_price, step,):
     """MILKをSELLするかHOLDするか判断する"""
 
-    if step >= 710:
+    if step >= StrategyConfig.FINAL_SELL_STEP:
         return True
 
-    if milk_price >= 160:
+    if milk_price >= StrategyConfig.MILK_SELL_PRICE:
         return True
 
     return False
@@ -84,12 +179,12 @@ def should_sell_milk(milk_price, step,):
 def get_harvest_age(crop_name):
     """現在の戦略で使う収穫開始日を返す。"""
     if crop_name == "MELON":
-        return 10
+        return StrategyConfig.MELON_HARVEST_AGE
 
     if crop_name == "STRAWBERRY":
-        return 10
+        return StrategyConfig.STRAWBERRY_HARVEST_AGE
 
-    return 2
+    return StrategyConfig.DEFAULT_HARVEST_AGE
 
 
 def get_tile_action(tile, day, allow_fertilizer_collection=True,):
@@ -318,19 +413,7 @@ def find_cow_target(
 
 def get_hand_area(hand_index):
     """作業員ごとの担当エリアを返す"""
-
-    hand_areas = {
-        0: "NW",
-        1: "NE",
-        2: "SW",
-        3: "NE",
-        4: "SW",
-        5: "NW",
-        6: "NE",
-        7: "NW",
-    }
-
-    return hand_areas.get(hand_index)
+    return StrategyConfig.HAND_AREAS.get(hand_index)
 
 
 def find_target_tile(
@@ -384,7 +467,7 @@ def find_target_tile(
 
             # 雑草
             if isinstance(tile, dict) and tile.get("kind") == "WEED":
-                if day >= 27:
+                if day >= StrategyConfig.GENERAL_PLANT_END_DAY:
                     continue
 
                 base_score = 0
@@ -438,7 +521,7 @@ def find_target_tile(
 
             # 空き地
             elif tile is None and has_seeds:
-                if day >= 27:
+                if day >= StrategyConfig.GENERAL_PLANT_END_DAY:
                     continue
 
                 base_score = 50
@@ -450,7 +533,7 @@ def find_target_tile(
             task_score = base_score - movement_cost
 
             if outside_area:
-                task_score -= 30
+                task_score -= StrategyConfig.OUTSIDE_AREA_PENALTY
 
             if task_score > best_score:
                 best_score = task_score
@@ -458,77 +541,188 @@ def find_target_tile(
 
     return best_target
 
-def update_hire_control(
-    player,
-    day,
-    step,
-    unlocked_quads,
+
+def get_cow_coords(tiles):
+    """牛がいる座標をまとめて返す。"""
+    cow_coords = set()
+
+    for y in range(len(tiles)):
+        for x in range(len(tiles[0])):
+            tile = tiles[y][x]
+
+            if (
+                isinstance(tile, dict)
+                and tile.get("animal") == "COW"
+            ):
+                cow_coords.add((x, y))
+
+    return cow_coords
+
+
+def choose_plant_action(
+    plant_allowed,
+    melon_plant_allowed,
+    strawberry_plant_allowed,
+    remaining_melon_seeds,
+    remaining_strawberry_seeds,
+    remaining_wheat_seeds,
 ):
-    """前日の作業員PASS率から目標作業員数を更新する。"""
+    """作物の優先順位に従って植付け行動を返す。"""
+    action = None
 
     if (
-        step == 0
-        or player not in hire_control_states
+        plant_allowed
+        and melon_plant_allowed
+        and remaining_melon_seeds > 0
     ):
-        hire_control_states[player] = {
-            "day": day,
-            "pass_count": 0,
-            "action_count": 0,
-            "target_hands": 6,
-        }
+        action = ["PLANT", "MELON"]
+        remaining_melon_seeds -= 1
 
-        return hire_control_states[player]
+    elif (
+        plant_allowed
+        and strawberry_plant_allowed
+        and remaining_strawberry_seeds > 0
+    ):
+        action = ["PLANT", "STRAWBERRY"]
+        remaining_strawberry_seeds -= 1
 
-    state = hire_control_states[player]
+    elif plant_allowed and remaining_wheat_seeds > 0:
+        action = ["PLANT", "WHEAT"]
+        remaining_wheat_seeds -= 1
 
-    if day != state["day"]:
-
-        if state["action_count"] > 0:
-            pass_rate = (
-                state["pass_count"]
-                / state["action_count"]
-            )
-
-            # PASS率15%以上なら1人減らす
-            if pass_rate >= 0.15:
-                state["target_hands"] = max(
-                    0,
-                    state["target_hands"] - 1,
-                )
-
-            # PASS率5%以下なら1人増やす
-            elif pass_rate <= 0.05:
-                state["target_hands"] = min(
-                    8,
-                    state["target_hands"] + 1,
-                )
-        if len(unlocked_quads) >= 3:
-            state["target_hands"] = max(
-                7,
-                state["target_hands"],
-            )
-
-        state["day"] = day
-        state["pass_count"] = 0
-        state["action_count"] = 0
-
-    return state
+    return (
+        action,
+        remaining_melon_seeds,
+        remaining_strawberry_seeds,
+        remaining_wheat_seeds,
+    )
 
 
-def record_hands_actions(
-    player,
-    hands_actions,
+def has_remaining_planting(
+    plant_allowed,
+    melon_plant_allowed,
+    strawberry_plant_allowed,
+    remaining_melon_seeds,
+    remaining_strawberry_seeds,
+    remaining_wheat_seeds,
 ):
-    """現在ターンの作業員PASS数を記録する。"""
+    """現在植えられる種が残っているか返す。"""
+    return (
+        plant_allowed
+        and (
+            remaining_wheat_seeds > 0
+            or (
+                melon_plant_allowed
+                and remaining_melon_seeds > 0
+            )
+            or (
+                strawberry_plant_allowed
+                and remaining_strawberry_seeds > 0
+            )
+        )
+    )
 
-    state = hire_control_states[player]
 
-    for hand_action in hands_actions:
+def move_to_work_target(
+    tiles,
+    actor_x,
+    actor_y,
+    has_seeds,
+    day,
+    claimed_targets,
+    excluded_coords=None,
+    target_area=None,
+):
+    """最適な作業対象へ移動し、対象がなければPASSする。"""
+    if excluded_coords is None:
+        excluded_coords = claimed_targets
 
-        state["action_count"] += 1
+    target = find_target_tile(
+        tiles,
+        actor_x,
+        actor_y,
+        has_seeds,
+        day,
+        excluded_coords,
+        target_area,
+    )
 
-        if hand_action == ["PASS"]:
-            state["pass_count"] += 1
+    if target is None:
+        return ["PASS"]
+
+    claimed_targets.add(target)
+    move_dir = step_toward(
+        actor_x,
+        actor_y,
+        target[0],
+        target[1],
+        tiles,
+    )
+
+    return [move_dir]
+
+class HireController:
+    """プレイヤーごとの作業員数をPASS率で調整する。"""
+
+    def __init__(self):
+        """プレイヤー別の雇用状態を初期化する。"""
+        self.states = {}
+
+    def update(self, player, day, step, unlocked_quads):
+        """前日のPASS率から目標作業員数を更新する。"""
+        if step == 0 or player not in self.states:
+            self.states[player] = {
+                "day": day,
+                "pass_count": 0,
+                "action_count": 0,
+                "target_hands": StrategyConfig.INITIAL_TARGET_HANDS,
+            }
+
+            return self.states[player]
+
+        state = self.states[player]
+
+        if day != state["day"]:
+            if state["action_count"] > 0:
+                pass_rate = state["pass_count"] / state["action_count"]
+
+                if pass_rate >= StrategyConfig.PASS_RATE_TO_DECREASE:
+                    state["target_hands"] = max(
+                        0,
+                        state["target_hands"] - 1,
+                    )
+
+                elif pass_rate <= StrategyConfig.PASS_RATE_TO_INCREASE:
+                    state["target_hands"] = min(
+                        StrategyConfig.MAX_HANDS,
+                        state["target_hands"] + 1,
+                    )
+
+            if len(unlocked_quads) >= StrategyConfig.TARGET_LAND_COUNT:
+                state["target_hands"] = max(
+                    StrategyConfig.MIN_LARGE_FARM_HANDS,
+                    state["target_hands"],
+                )
+
+            state["day"] = day
+            state["pass_count"] = 0
+            state["action_count"] = 0
+
+        return state
+
+    def record(self, player, hands_actions):
+        """現在ターンの作業員PASS数を記録する。"""
+        state = self.states[player]
+
+        for hand_action in hands_actions:
+            state["action_count"] += 1
+
+            if hand_action == ["PASS"]:
+                state["pass_count"] += 1
+
+
+# 雇用状態を対戦中に維持する。
+hire_controller = HireController()
 
 def build_market_actions(
     me,
@@ -542,7 +736,6 @@ def build_market_actions(
     cow_count,
     target_hands,
     milk_price,
-    milk_demand_shops_count,
     max_market_orders,
 ):
     """現在の市場売買・雇用・土地購入ルールから注文一覧を作る。"""
@@ -590,30 +783,37 @@ def build_market_actions(
                 strawberry_planted_count += 1
 
     melon_total = melon_seeds + melon_planted_count
-    melon_to_buy = max(10 - melon_total, 0)
+    melon_to_buy = max(StrategyConfig.MELON_TARGET_COUNT - melon_total, 0)
 
     if(
-        day < 8
+        day < StrategyConfig.MELON_PLANT_END_DAY
         and melon_to_buy > 0
-        and money >= melon_to_buy * 80
+        and money >= melon_to_buy * StrategyConfig.MELON_SEED_PRICE
     ):
         market.append(
             ["BUY_SEED", "MELON", melon_to_buy]
         )
 
     strawberry_total = (strawberry_seeds + strawberry_planted_count)
-    strawberry_to_buy = max(35 - strawberry_total, 0,)
+    strawberry_to_buy = max(
+        StrategyConfig.STRAWBERRY_TARGET_COUNT - strawberry_total,
+        0,
+    )
 
-    if (len(unlocked_quads) >= 3
-        and day < 20
+    if (len(unlocked_quads) >= StrategyConfig.TARGET_LAND_COUNT
+        and day < StrategyConfig.STRAWBERRY_PLANT_END_DAY
         and strawberry_to_buy > 0
-        and money >= strawberry_to_buy * 100
+        and money >= strawberry_to_buy * StrategyConfig.STRAWBERRY_SEED_PRICE
     ):
 
         market.append(["BUY_SEED", "STRAWBERRY", strawberry_to_buy,])
 
-    if wheat_seeds == 0 and money >= 10:
-        market.append(["BUY_SEED", "WHEAT", 6])
+    if wheat_seeds == 0 and money >= StrategyConfig.WHEAT_SEED_PRICE:
+        market.append([
+            "BUY_SEED",
+            "WHEAT",
+            StrategyConfig.WHEAT_SEED_BUY_COUNT,
+        ])
 
 
     # WHEAT売却
@@ -651,7 +851,7 @@ def build_market_actions(
 
         target_feed_wheat = max(
             unfed_cow_count,
-            2,
+            StrategyConfig.MIN_FEED_WHEAT,
         )
 
         wheat_to_buy = max(
@@ -693,8 +893,8 @@ def build_market_actions(
         if should_sell_milk(milk_price, step):
             milk_to_sell = (
                 milk_in_shed
-                if step >= 710
-                else min(milk_in_shed, 6)
+                if step >= StrategyConfig.FINAL_SELL_STEP
+                else min(milk_in_shed, StrategyConfig.MILK_SELL_BATCH)
             )
 
             market.append(["SELL", "MILK", milk_to_sell,])
@@ -709,23 +909,22 @@ def build_market_actions(
             melon_price,
             melon_stock,
             melon_in_shed,
-            day,
             step,
         ):
             market.append(["SELL", "MELON", melon_in_shed])
 
     # HIRE後に追加される注文枠を事前に確保
     will_buy_land = (
-        len(unlocked_quads) < 3
-        and money >= 5000
+        len(unlocked_quads) < StrategyConfig.TARGET_LAND_COUNT
+        and money >= StrategyConfig.LAND_PRICE
     )
 
     cow_in_shed = shed.get("COW", 0)
 
     will_buy_cow = (
         len(unlocked_quads) >= 1
-        and cow_count < 4
-        and money >= 400
+        and cow_count < StrategyConfig.TARGET_COW_COUNT
+        and money >= StrategyConfig.COW_PRICE
     )
 
     reserved_market_orders = (
@@ -736,7 +935,11 @@ def build_market_actions(
         max_market_orders - len(market) - reserved_market_orders, 0,
     )
 
-    hire_count = min(max(target_hands - len(current_hands), 0), available_hire_slots, 2)
+    hire_count = min(
+        max(target_hands - len(current_hands), 0),
+        available_hire_slots,
+        StrategyConfig.MAX_HIRES_PER_TURN,
+    )
 
     for _ in range(hire_count):
         market.append(["HIRE"])
@@ -772,6 +975,7 @@ def build_market_actions(
 
 
 def agent(obs, config):
+    """現在状態から農家・作業員・市場の行動を決定する。"""
 
     # 状態取得
 
@@ -796,20 +1000,6 @@ def agent(obs, config):
 
     milk_price = get_market_price(obs, "MILK",)
 
-    milk_demand_shops = {
-        "PIZZA_SHOP",
-        "ICE_CREAM_SHOP",
-        "SMOOTHIE_SHOP",
-    }
-
-    unlocked_shops = obs.get("town", {},).get("unlocked_shops", [],)
-
-    milk_demand_shops_count = sum(
-        1
-        for shop in unlocked_shops
-        if shop in milk_demand_shops
-    )
-
     melon_price = get_market_price(obs, "MELON",)
     melon_stock = obs["market"]["inventory"]["MELON"]
 
@@ -821,26 +1011,24 @@ def agent(obs, config):
     remaining_melon_seeds = melon_seeds
     remaining_strawberry_seeds = strawberry_seeds
 
-    melon_plant_allowed = day < 8
-    strawberry_plant_allowed = day < 20
+    melon_plant_allowed = day < StrategyConfig.MELON_PLANT_END_DAY
+    strawberry_plant_allowed = day < StrategyConfig.STRAWBERRY_PLANT_END_DAY
 
     wheat_in_shed = shed.get("WHEAT", 0)
 
-    has_seeds = (wheat_seeds > 0 or melon_seeds > 0)
-
     inventories = private.get("inventories", [])
 
-    famer_inventory = (
+    farmer_inventory = (
         inventories[0]
         if len(inventories) > 0
         else {}
     )
-    farmer_cow = famer_inventory.get("COW", 0)
+    farmer_cow = farmer_inventory.get("COW", 0)
 
-    farmer_wheat = famer_inventory.get("WHEAT", 0)
-    farmer_fertilizer = famer_inventory.get("FERTILIZER", 0)
+    farmer_wheat = farmer_inventory.get("WHEAT", 0)
+    farmer_fertilizer = farmer_inventory.get("FERTILIZER", 0)
 
-    farmer_milk = famer_inventory.get("MILK", 0)
+    farmer_milk = farmer_inventory.get("MILK", 0)
 
     pasture_count = 0
 
@@ -860,7 +1048,7 @@ def agent(obs, config):
     cow_count += shed.get("COW", 0)
     cow_count += farmer_cow
 
-    hire_state = update_hire_control(
+    hire_state = hire_controller.update(
         player,
         day,
         step,
@@ -898,7 +1086,6 @@ def agent(obs, config):
         cow_count,
         target_hands,
         milk_price,
-        milk_demand_shops_count,
         config.get("maxMarketOrdersPerTurn", 10,),
     )
 
@@ -907,12 +1094,18 @@ def agent(obs, config):
     farmer_action = None
     cow_in_shed = shed.get("COW", 0)
 
-    if step >= 710 and farmer_milk > 0:
-        if (fx, fy) == (4, 4):
+    if step >= StrategyConfig.FINAL_SELL_STEP and farmer_milk > 0:
+        if (fx, fy) == StrategyConfig.SHED_COORD:
             farmer_action = ["PLACE", "MILK", farmer_milk,]
 
         else:
-            move_dir = step_toward(fx, fy, 4, 4, tiles)
+            move_dir = step_toward(
+                fx,
+                fy,
+                StrategyConfig.SHED_COORD[0],
+                StrategyConfig.SHED_COORD[1],
+                tiles,
+            )
             farmer_action = [move_dir]
 
 
@@ -956,31 +1149,26 @@ def agent(obs, config):
 
 
     elif farmer_tile is None:
-        if cow_in_shed > 0 and pasture_count < 4:
+        if (
+            cow_in_shed > 0
+            and pasture_count < StrategyConfig.TARGET_PASTURE_COUNT
+        ):
             farmer_action = ["BUILD_PASTURE",]
 
-        elif (
-            plant_allowed
-            and melon_plant_allowed
-            and remaining_melon_seeds > 0
-        ):
-            farmer_action = ["PLANT", "MELON",]
-            remaining_melon_seeds -= 1
-
-        elif (
-            plant_allowed
-            and strawberry_plant_allowed
-            and remaining_strawberry_seeds > 0
-        ):
-            farmer_action = ["PLANT", "STRAWBERRY",]
-            remaining_strawberry_seeds -= 1
-
-        elif (
-            plant_allowed
-            and remaining_wheat_seeds > 0
-        ):
-            farmer_action = ["PLANT", "WHEAT",]
-            remaining_wheat_seeds -= 1
+        else:
+            (
+                farmer_action,
+                remaining_melon_seeds,
+                remaining_strawberry_seeds,
+                remaining_wheat_seeds,
+            ) = choose_plant_action(
+                plant_allowed,
+                melon_plant_allowed,
+                strawberry_plant_allowed,
+                remaining_melon_seeds,
+                remaining_strawberry_seeds,
+                remaining_wheat_seeds,
+            )
 
     else:
         farmer_action = get_tile_action(farmer_tile, day,)
@@ -1011,18 +1199,16 @@ def agent(obs, config):
                 farmer_action = [move_dir]
 
     if farmer_action is None:
-
-        remaining_has_seeds = (
-            plant_allowed
-            and (
-                remaining_wheat_seeds > 0
-                or (melon_plant_allowed and remaining_melon_seeds > 0)
-                or (strawberry_plant_allowed and remaining_strawberry_seeds > 0)
-                )
+        remaining_has_seeds = has_remaining_planting(
+            plant_allowed,
+            melon_plant_allowed,
+            strawberry_plant_allowed,
+            remaining_melon_seeds,
+            remaining_strawberry_seeds,
+            remaining_wheat_seeds,
         )
 
-
-        target = find_target_tile(
+        farmer_action = move_to_work_target(
             tiles,
             fx,
             fy,
@@ -1030,18 +1216,6 @@ def agent(obs, config):
             day,
             claimed_targets,
         )
-        if target is not None:
-            claimed_targets.add(target)
-            move_dir = step_toward(
-                fx,
-                fy,
-                target[0],
-                target[1],
-                tiles,
-            )
-            farmer_action = [move_dir]
-        else:
-            farmer_action = ["PASS"]
     else:
         claimed_targets.add(
             (fx, fy)
@@ -1072,15 +1246,15 @@ def agent(obs, config):
                 and hand_wheat == 0
                 and wheat_in_shed > 0
             ):
-                if (hx, hy) == (4, 4):
+                if (hx, hy) == StrategyConfig.SHED_COORD:
                     hand_action = ["PICKUP", "WHEAT", 1,]
 
                 else:
                     move_dir = step_toward(
                         hx,
                         hy,
-                        4,
-                        4,
+                        StrategyConfig.SHED_COORD[0],
+                        StrategyConfig.SHED_COORD[1],
                         tiles,
                     )
                     hand_action = [move_dir]
@@ -1143,21 +1317,20 @@ def agent(obs, config):
                     hand_action = None
 
             if hand_action is None:
-                cow_coords = set()
-
-            if hand_action is None:
                 if hand_tile is None:
-                    if plant_allowed and melon_plant_allowed and remaining_melon_seeds > 0:
-                        hand_action = ["PLANT", "MELON",]
-                        remaining_melon_seeds -= 1
-
-                    elif plant_allowed and strawberry_plant_allowed and remaining_strawberry_seeds > 0:
-                        hand_action = ["PLANT", "STRAWBERRY",]
-                        remaining_strawberry_seeds -= 1
-
-                    elif plant_allowed and remaining_wheat_seeds > 0:
-                        hand_action = ["PLANT", "WHEAT",]
-                        remaining_wheat_seeds -= 1
+                    (
+                        hand_action,
+                        remaining_melon_seeds,
+                        remaining_strawberry_seeds,
+                        remaining_wheat_seeds,
+                    ) = choose_plant_action(
+                        plant_allowed,
+                        melon_plant_allowed,
+                        strawberry_plant_allowed,
+                        remaining_melon_seeds,
+                        remaining_strawberry_seeds,
+                        remaining_wheat_seeds,
+                    )
 
                 elif not(
                     isinstance(hand_tile, dict)
@@ -1170,81 +1343,47 @@ def agent(obs, config):
 
 
             if hand_action is None:
-                cow_coords = set()
+                cow_coords = get_cow_coords(tiles)
 
-                for y in range(len(tiles)):
-                    for x in range(len(tiles[0])):
-                        tile = tiles[y][x]
-
-                        if(
-                            isinstance(tile, dict)
-                            and tile.get("animal") == "COW"
-                        ):
-                            cow_coords.add((x, y))
-
-                remaining_has_seeds = (
-                    plant_allowed
-                    and(
-                        remaining_wheat_seeds > 0
-                        or (
-                            melon_plant_allowed
-                            and remaining_melon_seeds > 0
-                        )
-
-                        or (
-                            strawberry_plant_allowed
-                            and remaining_strawberry_seeds > 0
-                        )
-                    )
+                remaining_has_seeds = has_remaining_planting(
+                    plant_allowed,
+                    melon_plant_allowed,
+                    strawberry_plant_allowed,
+                    remaining_melon_seeds,
+                    remaining_strawberry_seeds,
+                    remaining_wheat_seeds,
                 )
 
                 hand_area = get_hand_area(hand_index,)
 
-                target = find_target_tile(
+                hand_action = move_to_work_target(
                     tiles,
                     hx,
                     hy,
                     remaining_has_seeds,
                     day,
-                    claimed_targets | cow_coords,
-                    hand_area,
+                    claimed_targets,
+                    excluded_coords=claimed_targets | cow_coords,
+                    target_area=hand_area,
                 )
-
-
-                if target is not None:
-                    claimed_targets.add(target)
-
-                    move_dir = step_toward(
-                        hx,
-                        hy,
-                        target[0],
-                        target[1],
-                        tiles,
-                    )
-
-                    hand_action = [move_dir]
-
-                else:
-                    hand_action = ["PASS"]
 
 
         else:
 
             if hand_tile is None:
-                if plant_allowed and melon_plant_allowed and remaining_melon_seeds > 0:
-                    hand_action = ["PLANT", "MELON",]
-                    remaining_melon_seeds -= 1
-
-                elif plant_allowed and strawberry_plant_allowed and remaining_strawberry_seeds > 0:
-                    hand_action = ["PLANT", "STRAWBERRY",]
-                    remaining_strawberry_seeds -= 1
-
-                elif plant_allowed and remaining_wheat_seeds > 0:
-                    hand_action = ["PLANT", "WHEAT",]
-                    remaining_wheat_seeds -= 1
-
-                else:
-                    hand_action = None
+                (
+                    hand_action,
+                    remaining_melon_seeds,
+                    remaining_strawberry_seeds,
+                    remaining_wheat_seeds,
+                ) = choose_plant_action(
+                    plant_allowed,
+                    melon_plant_allowed,
+                    strawberry_plant_allowed,
+                    remaining_melon_seeds,
+                    remaining_strawberry_seeds,
+                    remaining_wheat_seeds,
+                )
 
             elif(
                 isinstance(hand_tile, dict)
@@ -1262,61 +1401,29 @@ def agent(obs, config):
                 hand_action = None
 
             if hand_action is None:
-                cow_coords = set()
+                cow_coords = get_cow_coords(tiles)
 
-                for y in range(len(tiles)):
-                    for x in range(len(tiles[0])):
-                        tile = tiles[y][x]
-
-                        if(
-                            isinstance(tile, dict)
-                            and tile.get("animal") == "COW"
-                        ):
-                            cow_coords.add((x, y))
-
-                remaining_has_seeds = (
-                    plant_allowed
-
-                    and (
-                        remaining_wheat_seeds > 0
-                        or (
-                            melon_plant_allowed
-                            and remaining_melon_seeds > 0
-                        )
-                        or (
-                            strawberry_plant_allowed
-                            and remaining_strawberry_seeds > 0
-                        )
-                    )
+                remaining_has_seeds = has_remaining_planting(
+                    plant_allowed,
+                    melon_plant_allowed,
+                    strawberry_plant_allowed,
+                    remaining_melon_seeds,
+                    remaining_strawberry_seeds,
+                    remaining_wheat_seeds,
                 )
 
                 hand_area = get_hand_area(hand_index,)
 
-                target = find_target_tile(
+                hand_action = move_to_work_target(
                     tiles,
                     hx,
                     hy,
                     remaining_has_seeds,
                     day,
-                    claimed_targets | cow_coords,
-                    hand_area,
+                    claimed_targets,
+                    excluded_coords=claimed_targets | cow_coords,
+                    target_area=hand_area,
                 )
-
-                if target is not None:
-                    claimed_targets.add(target)
-
-                    move_dir = step_toward(
-                        hx,
-                        hy,
-                        target[0],
-                        target[1],
-                        tiles,
-                    )
-
-                    hand_action = [move_dir]
-
-                else:
-                    hand_action = ["PASS"]
 
 
         if hand_action is not None:
@@ -1328,7 +1435,7 @@ def agent(obs, config):
             hand_action
         )
 
-    record_hands_actions(
+    hire_controller.record(
         player,
         hands_actions,
     )
