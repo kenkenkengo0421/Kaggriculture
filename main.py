@@ -72,10 +72,10 @@ class StrategyConfig:
     INITIAL_TARGET_HANDS = 6
 
     # 土地が3区画以上になった場合の最低作業員数
-    MIN_LARGE_FARM_HANDS = 7
+    MIN_LARGE_FARM_HANDS = 10
 
     # PASS率による増員で許可する作業員の上限数
-    MAX_HANDS = 8
+    MAX_HANDS = 10
 
     # 作業員を1人減らすPASS率
     PASS_RATE_TO_DECREASE = 0.15
@@ -99,6 +99,8 @@ class StrategyConfig:
         5: "NW",
         6: "NE",
         7: "NW",
+        8: "NW",
+        9: "SW",
     }
 
 def get_market_price(obs, product):
