@@ -86,6 +86,9 @@ class StrategyConfig:
     # 倉庫が置かれている座標
     SHED_COORD = (4, 4)
 
+    # 牛乳の緊急売却を開始する非種子アイテムの保有数
+    SHED_EMERGENCY_SELL_LEVEL = 95
+
     # 担当エリア外の作業候補に与える減点
     OUTSIDE_AREA_PENALTY = 30
 
@@ -166,13 +169,16 @@ def should_sell_melon(
 
     return False
 
-def should_sell_milk(milk_price, step,):
+def should_sell_milk(milk_price, step, total_non_seed_items,):
     """MILKをSELLするかHOLDするか判断する"""
 
     if step >= StrategyConfig.FINAL_SELL_STEP:
         return True
 
     if milk_price >= StrategyConfig.MILK_SELL_PRICE:
+        return True
+
+    if total_non_seed_items >= StrategyConfig.SHED_EMERGENCY_SELL_LEVEL:
         return True
 
     return False
@@ -763,6 +769,10 @@ def build_market_actions(
 
     strawberry_in_shed = shed.get("STRAWBERRY", 0)
 
+    total_non_seed_items = sum(shed.values())
+
+    for inventory in inventories:
+        total_non_seed_items += sum(inventory.values())
 
     # 種を購入
     melon_planted_count = 0
@@ -892,7 +902,7 @@ def build_market_actions(
 
     #MILK売却
     if milk_in_shed > 0:
-        if should_sell_milk(milk_price, step):
+        if should_sell_milk(milk_price, step, total_non_seed_items,):
             milk_to_sell = (
                 milk_in_shed
                 if step >= StrategyConfig.FINAL_SELL_STEP
