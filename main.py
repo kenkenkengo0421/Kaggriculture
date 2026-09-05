@@ -29,6 +29,17 @@ class StrategyConfig:
     # いちごの種数と植付済み数を合わせた購入目標数
     STRAWBERRY_TARGET_COUNT = 35
 
+    # いちご需要店舗が何店舗以上なら種を購入するか
+    MIN_STRAWBERRY_DEMAND_SHOPS = 1
+
+    # いちごの需要を増加させる店舗    
+    STRAWBERRY_DEMAND_SHOPS = {
+        "BRUNCH_SPOT",
+        "ICE_CREAM_SHOP",
+        "SMOOTHIE_SHOP",
+        "FARMERS_MARKET",
+    }   
+
     # メロン種を購入できるか判定するための単価
     MELON_SEED_PRICE = 80
 
@@ -744,6 +755,7 @@ def build_market_actions(
     cow_count,
     target_hands,
     milk_price,
+    unlocked_shops,
     max_market_orders,
 ):
     """現在の市場売買・雇用・土地購入ルールから注文一覧を作る。"""
@@ -794,6 +806,12 @@ def build_market_actions(
             ):
                 strawberry_planted_count += 1
 
+    strawberry_demand_shop_count = sum(
+        1
+        for shop in unlocked_shops
+        if shop in StrategyConfig.STRAWBERRY_DEMAND_SHOPS
+    )
+
     melon_total = melon_seeds + melon_planted_count
     melon_to_buy = max(StrategyConfig.MELON_TARGET_COUNT - melon_total, 0)
 
@@ -814,6 +832,8 @@ def build_market_actions(
 
     if (len(unlocked_quads) >= StrategyConfig.TARGET_LAND_COUNT
         and day < StrategyConfig.STRAWBERRY_PLANT_END_DAY
+        and strawberry_demand_shop_count
+        >= StrategyConfig.MIN_STRAWBERRY_DEMAND_SHOPS
         and strawberry_to_buy > 0
         and money >= strawberry_to_buy * StrategyConfig.STRAWBERRY_SEED_PRICE
     ):
@@ -1008,8 +1028,8 @@ def agent(obs, config):
     step = obs.get("step", 0)
     hour = obs.get("hour", 0)
 
+    unlocked_shops = obs.get("town", {},).get("unlocked_shops", [],)
     current_hands = me.get("hands", [])
-
     milk_price = get_market_price(obs, "MILK",)
 
     melon_price = get_market_price(obs, "MELON",)
@@ -1098,6 +1118,7 @@ def agent(obs, config):
         cow_count,
         target_hands,
         milk_price,
+        unlocked_shops,
         config.get("maxMarketOrdersPerTurn", 10,),
     )
 
