@@ -11,6 +11,9 @@ class StrategyConfig:
     # いちごを収穫対象として扱い始める経過日数
     STRAWBERRY_HARVEST_AGE = 10
 
+    # 人参を収穫対象として扱い始める経過日数
+    CARROT_HARVEST_AGE = 3
+
     # メロン・いちご以外の作物に使用する収穫経過日数
     DEFAULT_HARVEST_AGE = 2
 
@@ -32,19 +35,25 @@ class StrategyConfig:
     # いちご需要店舗が何店舗以上なら種を購入するか
     MIN_STRAWBERRY_DEMAND_SHOPS = 1
 
-    # いちごの需要を増加させる店舗    
+    # いちごの需要を増加させる店舗
     STRAWBERRY_DEMAND_SHOPS = {
         "BRUNCH_SPOT",
         "ICE_CREAM_SHOP",
         "SMOOTHIE_SHOP",
         "FARMERS_MARKET",
-    }   
+    }
+
+    # PET_CAFE1店舗あたりのニンジン目標数
+    CARROT_TARGET_PER_PET_CAFE = 7
 
     # メロン種を購入できるか判定するための単価
     MELON_SEED_PRICE = 80
 
     # いちご種を購入できるか判定するための単価
     STRAWBERRY_SEED_PRICE = 100
+
+    # ニンジン種を購入できるか判定するための単価
+    CARROT_SEED_PRICE = 20
 
     # 小麦種の購入を許可する最低所持金
     WHEAT_SEED_PRICE = 10
@@ -202,6 +211,9 @@ def get_harvest_age(crop_name):
 
     if crop_name == "STRAWBERRY":
         return StrategyConfig.STRAWBERRY_HARVEST_AGE
+
+    if crop_name == "CARROT":
+        return StrategyConfig.CARROT_HARVEST_AGE
 
     return StrategyConfig.DEFAULT_HARVEST_AGE
 
@@ -584,6 +596,7 @@ def choose_plant_action(
     strawberry_plant_allowed,
     remaining_melon_seeds,
     remaining_strawberry_seeds,
+    remaining_carrot_seeds,
     remaining_wheat_seeds,
 ):
     """作物の優先順位に従って植付け行動を返す。"""
@@ -605,6 +618,10 @@ def choose_plant_action(
         action = ["PLANT", "STRAWBERRY"]
         remaining_strawberry_seeds -= 1
 
+    elif plant_allowed and remaining_carrot_seeds > 0:
+        action = ["PLANT", "CARROT"]
+        remaining_carrot_seeds -= 1
+
     elif plant_allowed and remaining_wheat_seeds > 0:
         action = ["PLANT", "WHEAT"]
         remaining_wheat_seeds -= 1
@@ -613,6 +630,7 @@ def choose_plant_action(
         action,
         remaining_melon_seeds,
         remaining_strawberry_seeds,
+        remaining_carrot_seeds,
         remaining_wheat_seeds,
     )
 
@@ -623,6 +641,7 @@ def has_remaining_planting(
     strawberry_plant_allowed,
     remaining_melon_seeds,
     remaining_strawberry_seeds,
+    remaining_carrot_seeds,
     remaining_wheat_seeds,
 ):
     """現在植えられる種が残っているか返す。"""
@@ -630,6 +649,7 @@ def has_remaining_planting(
         plant_allowed
         and (
             remaining_wheat_seeds > 0
+            or remaining_carrot_seeds > 0
             or (
                 melon_plant_allowed
                 and remaining_melon_seeds > 0
@@ -774,12 +794,15 @@ def build_market_actions(
 
     strawberry_seeds = seeds.get("STRAWBERRY", 0)
 
+    carrot_seeds = seeds.get("CARROT", 0)
+
     wheat_in_shed = shed.get("WHEAT", 0)
     melon_in_shed = shed.get("MELON", 0)
 
     milk_in_shed = shed.get("MILK", 0)
 
     strawberry_in_shed = shed.get("STRAWBERRY", 0)
+    carrot_in_shed = shed.get("CARROT", 0)
 
     total_non_seed_items = sum(shed.values())
 
@@ -789,6 +812,7 @@ def build_market_actions(
     # 種を購入
     melon_planted_count = 0
     strawberry_planted_count = 0
+    carrot_planted_count = 0
 
     for row in me["tiles"]:
         for tile in row:
@@ -806,10 +830,23 @@ def build_market_actions(
             ):
                 strawberry_planted_count += 1
 
+            if(
+                isinstance(tile, dict)
+                and tile.get("kind") == "PLANT"
+                and tile.get("crop") == "CARROT"
+            ):
+                carrot_planted_count += 1
+
     strawberry_demand_shop_count = sum(
         1
         for shop in unlocked_shops
         if shop in StrategyConfig.STRAWBERRY_DEMAND_SHOPS
+    )
+
+    pet_cafe_count = sum(
+        1
+        for shop in unlocked_shops
+        if shop == "PET_CAFE"
     )
 
     melon_total = melon_seeds + melon_planted_count
@@ -839,6 +876,21 @@ def build_market_actions(
     ):
 
         market.append(["BUY_SEED", "STRAWBERRY", strawberry_to_buy,])
+
+    carrot_total = carrot_seeds + carrot_planted_count
+    carrot_target_count = (pet_cafe_count * StrategyConfig.CARROT_TARGET_PER_PET_CAFE)
+    carrot_to_buy = max(carrot_target_count - carrot_total, 0)
+
+    if(
+        day < StrategyConfig.GENERAL_PLANT_END_DAY
+        and carrot_to_buy > 0
+        and money >= carrot_to_buy * StrategyConfig.CARROT_SEED_PRICE
+    ):
+        market.append([
+            "BUY_SEED",
+            "CARROT",
+            carrot_to_buy,
+        ])
 
     if wheat_seeds == 0 and money >= StrategyConfig.WHEAT_SEED_PRICE:
         market.append([
@@ -919,6 +971,14 @@ def build_market_actions(
 
     elif wheat_in_shed > 0:
         market.append(["SELL", "WHEAT", wheat_in_shed])
+
+    #CARROT売却
+    if carrot_in_shed > 0:
+        market.append([
+            "SELL",
+            "CARROT",
+            carrot_in_shed,
+        ])
 
     #MILK売却
     if milk_in_shed > 0:
@@ -1038,10 +1098,12 @@ def agent(obs, config):
     wheat_seeds = seeds.get("WHEAT", 0)
     melon_seeds = seeds.get("MELON", 0)
     strawberry_seeds = seeds.get("STRAWBERRY", 0)
+    carrot_seeds = seeds.get("CARROT", 0)
 
     remaining_wheat_seeds = wheat_seeds
     remaining_melon_seeds = melon_seeds
     remaining_strawberry_seeds = strawberry_seeds
+    remaining_carrot_seeds = carrot_seeds
 
     melon_plant_allowed = day < StrategyConfig.MELON_PLANT_END_DAY
     strawberry_plant_allowed = day < StrategyConfig.STRAWBERRY_PLANT_END_DAY
@@ -1193,6 +1255,7 @@ def agent(obs, config):
                 farmer_action,
                 remaining_melon_seeds,
                 remaining_strawberry_seeds,
+                remaining_carrot_seeds,
                 remaining_wheat_seeds,
             ) = choose_plant_action(
                 plant_allowed,
@@ -1200,6 +1263,7 @@ def agent(obs, config):
                 strawberry_plant_allowed,
                 remaining_melon_seeds,
                 remaining_strawberry_seeds,
+                remaining_carrot_seeds,
                 remaining_wheat_seeds,
             )
 
@@ -1238,6 +1302,7 @@ def agent(obs, config):
             strawberry_plant_allowed,
             remaining_melon_seeds,
             remaining_strawberry_seeds,
+            remaining_carrot_seeds,
             remaining_wheat_seeds,
         )
 
@@ -1355,6 +1420,7 @@ def agent(obs, config):
                         hand_action,
                         remaining_melon_seeds,
                         remaining_strawberry_seeds,
+                        remaining_carrot_seeds,
                         remaining_wheat_seeds,
                     ) = choose_plant_action(
                         plant_allowed,
@@ -1362,6 +1428,7 @@ def agent(obs, config):
                         strawberry_plant_allowed,
                         remaining_melon_seeds,
                         remaining_strawberry_seeds,
+                        remaining_carrot_seeds,
                         remaining_wheat_seeds,
                     )
 
@@ -1384,6 +1451,7 @@ def agent(obs, config):
                     strawberry_plant_allowed,
                     remaining_melon_seeds,
                     remaining_strawberry_seeds,
+                    remaining_carrot_seeds,
                     remaining_wheat_seeds,
                 )
 
@@ -1408,6 +1476,7 @@ def agent(obs, config):
                     hand_action,
                     remaining_melon_seeds,
                     remaining_strawberry_seeds,
+                    remaining_carrot_seeds,
                     remaining_wheat_seeds,
                 ) = choose_plant_action(
                     plant_allowed,
@@ -1415,6 +1484,7 @@ def agent(obs, config):
                     strawberry_plant_allowed,
                     remaining_melon_seeds,
                     remaining_strawberry_seeds,
+                    remaining_carrot_seeds,
                     remaining_wheat_seeds,
                 )
 
@@ -1442,6 +1512,7 @@ def agent(obs, config):
                     strawberry_plant_allowed,
                     remaining_melon_seeds,
                     remaining_strawberry_seeds,
+                    remaining_carrot_seeds,
                     remaining_wheat_seeds,
                 )
 
