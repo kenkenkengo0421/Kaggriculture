@@ -89,19 +89,19 @@ class StrategyConfig:
     MAX_HIRES_PER_TURN = 2
 
     # 対戦開始時の目標作業員数
-    INITIAL_TARGET_HANDS = 6
+    INITIAL_TARGET_HANDS = 8
 
     # 土地が3区画以上になった場合の最低作業員数
-    MIN_LARGE_FARM_HANDS = 10
+    MIN_LARGE_FARM_HANDS = 8
 
     # PASS率による増員で許可する作業員の上限数
     MAX_HANDS = 10
 
     # 作業員を1人減らすPASS率
-    PASS_RATE_TO_DECREASE = 0.15
+    PASS_RATE_TO_DECREASE = 0.19
 
     # 作業員を1人増やすPASS率
-    PASS_RATE_TO_INCREASE = 0.05
+    PASS_RATE_TO_INCREASE = 0.03
 
     # 倉庫が置かれている座標
     SHED_COORD = (4, 4)
