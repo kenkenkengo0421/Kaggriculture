@@ -110,7 +110,7 @@ class StrategyConfig:
     SHED_EMERGENCY_SELL_LEVEL = 95
 
     # 担当エリア外の作業候補に与える減点
-    OUTSIDE_AREA_PENALTY = 30
+    OUTSIDE_AREA_PENALTY = 25
 
     # 作業員番号ごとの優先担当エリア
     HAND_AREAS = {
