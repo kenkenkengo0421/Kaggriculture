@@ -74,7 +74,7 @@ class StrategyConfig:
     TARGET_LAND_COUNT = 3
 
     # 土地購入を許可する最低所持金
-    LAND_PRICE = 5000
+    LAND_PRICE = 7000
 
     # 購入を進める牛の目標頭数
     TARGET_COW_COUNT = 4
