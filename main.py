@@ -21,7 +21,7 @@ class StrategyConfig:
     MELON_PLANT_END_DAY = 6
 
     # いちごの植付けと種購入を許可する期限
-    STRAWBERRY_PLANT_END_DAY = 20
+    STRAWBERRY_PLANT_END_DAY = 26
 
     # 作業対象探索から雑草と空き地を除外し始める日
     GENERAL_PLANT_END_DAY = 27
@@ -30,7 +30,7 @@ class StrategyConfig:
     MELON_TARGET_COUNT = 10
 
     # いちごの種数と植付済み数を合わせた購入目標数
-    STRAWBERRY_TARGET_COUNT = 35
+    STRAWBERRY_TARGET_COUNT = 44
 
     # いちご需要店舗が何店舗以上なら種を購入するか
     MIN_STRAWBERRY_DEMAND_SHOPS = 1
