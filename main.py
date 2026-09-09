@@ -18,7 +18,7 @@ class StrategyConfig:
     DEFAULT_HARVEST_AGE = 2
 
     # メロンの植付けと種購入を許可する期限
-    MELON_PLANT_END_DAY = 8
+    MELON_PLANT_END_DAY = 6
 
     # いちごの植付けと種購入を許可する期限
     STRAWBERRY_PLANT_END_DAY = 20
