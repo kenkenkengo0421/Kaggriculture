@@ -9,7 +9,7 @@
 6. 牛乳・終盤売却
 
 
-## 1. 作業員数の探索
+## 1. [作業員数の探索](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/optuna/param_1.ipynb)
 
 最初に作業能力を決める。作業員数が変わると、植付け・水やり・収穫・牛の世話の処理可能量がすべて変わる。
 
@@ -24,7 +24,7 @@
 
 
 
-## 2. 土地・牛・牧草地の探索
+## 2. [土地・牛・牧草地の探索](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/optuna/param_2.ipynb)
 
 作業員設定を仮固定した後、生産設備の規模を探索する。
 
@@ -36,7 +36,7 @@
 | `TARGET_PASTURE_COUNT` | 4 | 2～5、1刻み |建設を進める牧草地の目標数|
 
 
-## 3. 担当エリアの効き方の探索
+## 3. [担当エリアの効き方の探索](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/optuna/param_3.ipynb)
 
 | パラメータ | 現在値 | 探索範囲 |メモ|
 |---|---:|---:|---:|
@@ -47,14 +47,14 @@
 
 作業能力と土地規模を固定してから、作物ごとに分けて探索する。
 
-### 4A. メロン
+### 4A. [メロン](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/optuna/param_4A.ipynb)
 
 | パラメータ | 現在値 | 探索範囲 |メモ|
 |---|---:|---:|---:|
 | `MELON_TARGET_COUNT` | 10 | 4～16、2刻み |メロンの種数と植付済み数を合わせた購入目標数|
 | `MELON_PLANT_END_DAY` | 8 | 4～10、1刻み |メロンの植付けと種購入を許可する期限|
 
-### 4B. いちご
+### 4B. [いちご](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/optuna/param_4B.ipynb)
 
 | パラメータ | 現在値 | 探索範囲 |メモ|
 |---|---:|---:|---:|
@@ -62,7 +62,7 @@
 | `STRAWBERRY_PLANT_END_DAY` | 20 | 14～24、2刻み |いちごの植付けと種購入を許可する期限|
 | `MIN_STRAWBERRY_DEMAND_SHOPS` | 1 | 0～2、1刻み |いちご需要店舗が何店舗以上なら種を購入するか|
 
-### 4C. ニンジン・小麦
+### 4C. [ニンジン・小麦](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/optuna/param_4C.ipynb)
 
 | パラメータ | 現在値 | 探索範囲 |メモ|
 |---|---:|---:|---:|
@@ -75,7 +75,7 @@
 
 各小段階の目安：80～150 trials。
 
-## 5. 収穫時期の探索
+## 5. [収穫時期の探索](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/optuna/param_5.ipynb)
 
 生産数が固まった後に、収穫量と作業負荷のバランスを探索する。
 
@@ -89,7 +89,7 @@
 メロンは資料上、初回収穫10日・最大収穫12日。ニンジンは初回2日・最大3日、小麦は初回2日・最大4日である。このゲーム上の範囲を探索境界に用いる。
 
 
-## 6. 牛乳・終盤売却の探索
+## 6. [牛乳・終盤売却の探索](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/optuna/param_6.ipynb)
 
 牛数と生産量が固まった最後に売却条件を探索する。
 
