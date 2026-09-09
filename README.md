@@ -21,6 +21,7 @@
 |[社長と従業員の動き](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/Kaggriculture_Movements_in_the_top_xx%25/range_of_action.ipynb)|`range_of_action.ipynb`|[kaggle notebook(ファイルサイズが大きいのでここで確認)](https://www.kaggle.com/code/nagatakengo/range-of-action)|
 |[雇用とコストと物価](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/Kaggriculture_Movements_in_the_top_xx%25/costs.ipynb)|`costs.ipynb`||
 |[未来のメロンの価格を予測](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/Kaggriculture_Movements_in_the_top_xx%25/Predict_future_melon_prices.ipynb)|`Predict_future_melon_prices.ipynb`||
+|[optuna](https://github.com/kenkenkengo0421/Kaggriculture/blob/main/optuna/optuna_param.md)|`optuna_param.md`||
 
 
 ### 環境
