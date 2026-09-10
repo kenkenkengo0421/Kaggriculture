@@ -24,7 +24,7 @@ class StrategyConfig:
     STRAWBERRY_PLANT_END_DAY = 26
 
     # 作業対象探索から雑草と空き地を除外し始める日
-    GENERAL_PLANT_END_DAY = 27
+    GENERAL_PLANT_END_DAY = 26
 
     # メロンの種数と植付済み数を合わせた購入目標数
     MELON_TARGET_COUNT = 10
