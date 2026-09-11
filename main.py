@@ -62,10 +62,10 @@ class StrategyConfig:
     WHEAT_SEED_BUY_COUNT = 6
 
     # 牛乳を通常売却する最低価格
-    MILK_SELL_PRICE = 160
+    MILK_SELL_PRICE = 240
 
     # 終盤以外で一度に売却する牛乳の上限数
-    MILK_SELL_BATCH = 6
+    MILK_SELL_BATCH = 2
 
     # 牛の餌として最低限確保する小麦数
     MIN_FEED_WHEAT = 2
